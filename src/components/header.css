@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #1A212F;
+    padding: 10px 40px;
+}
+
+.logo {
+    color: #FFF;
+    font-family: Montserrat, serif;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+
+.head-date-selector {
+    display: flex;
+    flex-direction: row;
+    justify-self: center;
+    padding-top: 5px;
+    margin-right: 40vw;
+}
+
+.head-date-selector>.box {
+    margin: 5px;
+}
+
+a {
+    text-decoration: none;
+}

@@ -1,0 +1,17 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3vw;
+    min-height: 70vh;
+    font-size: 14px;
+}
+
+.p-column-header-content {
+    text-align: left;
+}
+td {
+    vertical-align: top;
+    horiz-align: left;
+
+}
