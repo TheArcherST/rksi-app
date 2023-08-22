@@ -16,6 +16,10 @@ function LessonsTable({lessons, setLessons}) {
     const [currentDiscipline, setCurrentDiscipline] = useState(null);
     const [currentAuditorium, setCurrentAuditorium] = useState(null);
 
+    function resolveCurrent(_lesson, _key, _current) {
+        return (_current === null
+            || _current.id !== _lesson.id) ? _lesson[_key] : _current.value
+    }
     function groupsFormatter(lesson) {
         return (
             <AutoComplete
@@ -35,6 +39,11 @@ function LessonsTable({lessons, setLessons}) {
                     }
                 }
                 suggestions={suggestions}
+                onSubmit={
+                    () => {
+                        setLessons(lessons);
+                    }
+                }
                 onChange={(e) => {
                     lesson.groups.length = 0;
                     lesson.groups.push(...e.value);
@@ -81,7 +90,7 @@ function LessonsTable({lessons, setLessons}) {
             <AutoComplete
                 field="display_text"
                 forceSelection
-                value={currentAuditorium === null ? lesson.auditorium : currentAuditorium}
+                value={resolveCurrent(lesson, "auditorium", currentAuditorium)}
                 completeMethod={
                     (e) => {
                         const api = new APIAdapter()
@@ -101,7 +110,7 @@ function LessonsTable({lessons, setLessons}) {
                     () => setCurrentAuditorium(null)
                 }
                 onChange={(e) => {
-                    setCurrentAuditorium(e.value);
+                    setCurrentAuditorium({id: lesson.id, value: e.value});
                 }}
             />
         );
@@ -112,7 +121,7 @@ function LessonsTable({lessons, setLessons}) {
             <AutoComplete
                 field="display_text"
                 forceSelection
-                value={currentDiscipline === null ? lesson.discipline : currentDiscipline}
+                value={resolveCurrent(lesson, "discipline", currentDiscipline)}
                 completeMethod={
                     (e) => {
                         const api = new APIAdapter()
@@ -132,11 +141,12 @@ function LessonsTable({lessons, setLessons}) {
                     () => setCurrentDiscipline(null)
                 }
                 onChange={(e) => {
-                    setCurrentDiscipline(e.value);
+                    setCurrentDiscipline({id: lesson.id, value: e.value});
                 }}
             />
         );
     }
+
 
     return (
         <DataTable
@@ -155,26 +165,20 @@ function LessonsTable({lessons, setLessons}) {
             <Column
                 field="groups"
                 header="Группы"
-                body={groupsFormatter} />
+                body={groupsFormatter}
+                className={"column-groups"}/>
             <Column
                 field="teachers"
                 header="Преподаватели"
-                body={teachersFormatter} />
+                body={teachersFormatter}
+                className={"column-teachers"}/>
             <Column
                 field="discipline"
                 header="Дисциплина"
-                body={disciplineFormatter} />
+                body={disciplineFormatter}
+                className={"column-discipline"}/>
         </DataTable>
     );
-}
-
-function TableSelectComponent() {
-    return <Select />;
-}
-
-
-function TableMultiselectComponent() {
-    return <Select isMulti="true"/>;
 }
 
 
@@ -192,5 +196,14 @@ function Workspace() {
         </main>
     );
 }
+
+export function hookSaveData() {
+
+}
+
+export function hookDateChange() {
+
+}
+
 
 export default Workspace;

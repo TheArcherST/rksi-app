@@ -9,6 +9,11 @@
     padding: 10px 40px;
 }
 
+.save-button {
+    align-self: center;
+    margin-right: 4vw;
+}
+
 .logo {
     color: #FFF;
     font-family: Montserrat, serif;
@@ -21,9 +26,7 @@
 .head-date-selector {
     display: flex;
     flex-direction: row;
-    justify-self: center;
-    padding-top: 5px;
-    margin-right: 40vw;
+    align-self: center;
 }
 
 .head-date-selector>.box {

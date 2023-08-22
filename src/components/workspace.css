@@ -3,22 +3,28 @@ main {
     flex-direction: column;
     align-items: center;
     min-height: 70vh;
-    font-size: 14px;
+    font-size: 13px;
     margin: 3vw 5vh;
 }
 
+main * {
+    font-size: 13px !important;
+}
 .p-column-header-content {
     text-align: left;
 }
 
 td {
-
+    vertical-align: top;
+    horiz-align: left;
 }
 .p-autocomplete {
     border: none;
 }
 .p-inputtext	{
     border: none !important;
+    background-color: transparent !important;
+    cursor: pointer !important;
 }
 .p-inputtext:hover	{
     outline: none !important;
@@ -43,3 +49,29 @@ td {
 .p-autocomplete .p-autocomplete-multiple-container {
     padding: 0 !important;
 }*/
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 0 !important;
+}
+
+.p-autocomplete-input-token {
+    font-size: 13px;
+    max-height: 0;
+}
+.p-autocomplete-input-token:focus-within {
+    max-height: 100px;
+}
+
+.column-groups {
+    max-width: 9em;
+}
+.column-teachers {
+    max-width: 20em;
+}
+.column-discipline {
+    max-width: 20em;
+}
+.p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
+    padding: 0.175rem 0.55rem !important;
+    margin-top: 0.1rem;
+}

@@ -2,9 +2,9 @@ import React from "react";
 import {useState} from "react";
 import './header.css';
 
-import Select from 'react-select';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import {Button} from "primereact/button";
+import {Calendar} from "primereact/calendar";
+
 
 function AppLogo() {
     return (
@@ -22,45 +22,56 @@ const days = new Array(...(new Array(32)).keys()).slice(1);
 const dayOptions = days.map(i => {return {value: i, label: i}})
 
 
-function DateSelector() {
-    const [month, setMonth] = useState();
-    const [day, setDay] = useState();
-
-    function handleMonthChange(e) {
-        setMonth(e.value)
-    }
-
-    function handleDayChange(e) {
-        setDay(e.value);
-    }
+function DateSelector({onDateChange}) {
+    const [date, setDate] = useState(() => {
+        onDateChange();
+        return new Date();
+    });
 
     return (
         <div className={"head-date-selector"}>
-            <div className="box">
-                <Select
-                    options={monthOptions}
-                    onChange={handleMonthChange}
-                    isSearchable={true}
-                />
-            </div>
-            <div className="box">
-                <Select
-                    options={dayOptions}
-                    onChange={handleDayChange}
-                    isSearchable={true}
-                />
-            </div>
+            <Calendar
+                style={
+                {
+                    backgroundColor: 'white',
+                    color: 'black',
+                }
+            }
+                dateFormat="dd.mm.yy"
+                value={date}
+                onChange={(e) => {
+                    setDate(e.value);
+                    onDateChange(e);
+                }}></Calendar>
         </div>
     );
 }
 
 
+function SaveButton({savingDisabled, savingInProgress, onClick}) {
+    return (
+        <Button
+            className="save-button"
+            loading={savingInProgress}
+            disabled={savingDisabled}
+            onClick={onClick}>
+            Сохранить
+        </Button>
+    )
+}
 
-function Header() {
+
+function Header({onDateChange, onSaveButtonClick,
+                    savingDisabled, savingInProgress}) {
     return (
         <header className="header">
             <AppLogo />
-            <DateSelector />
+            <DateSelector
+                onDateChange={onDateChange}/>
+            <SaveButton
+                savingDisabled={savingDisabled}
+                savingInProgress={savingInProgress}
+                onClick={onSaveButtonClick} />
         </header>
     )
 }
