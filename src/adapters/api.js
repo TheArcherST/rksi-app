@@ -1,88 +1,33 @@
-const scheduleReadExample = [
-    {
-        "id": 1,
-        "time_circumstance": {
-            "starts_at": "2023-08-19T14:06:11",
-            "ends_at": "2023-08-19T14:06:11",
-            "display_text": "08:00-09:30"
-        },
-        "discipline": {
-            "id": 3,
-            "name": "Астрономия",
-            "display_text": "Астрономия"
-        },
-        "auditorium": {
-            "id": 1,
-            "building_number": 2,
-            "auditorium": "21",
-            "display_text": "2-21"
-        },
-        "teachers": [
-            {
-                "id": 1,
-                "first_name": "Михаил",
-                "second_name": "Шаповалов",
-                "patronymic": "Алексеевич",
-                "display_text": "Шаповалов Михаил Алексеевич",
-            }
-        ],
-        "groups": [
-            {
-                "id": 2,
-                "specialization_abbreviation": "ИБА",
-                "course_number": 1,
-                "group_number": 1,
-                "display_text": "ИБА-11"
-            }
-        ]
-    },
-    {
-        "id": 1,
-        "time_circumstance": {
-            "starts_at": "2023-08-19T14:06:11",
-            "ends_at": "2023-08-19T14:06:11",
-            "display_text": "08:00-09:30"
-        },
-        "discipline": {
-            "id": 3,
-            "name": "Астрономия",
-            "display_text": "Астрономия"
-        },
-        "auditorium": {
-            "id": 1,
-            "building_number": 2,
-            "auditorium": "21",
-            "display_text": "2-21"
-        },
-        "teachers": [
-            {
-                "id": 1,
-                "first_name": "Михаил",
-                "second_name": "Шаповалов",
-                "patronymic": "Алексеевич",
-                "display_text": "Шаповалов Михаил Алексеевич",
-            }
-        ],
-        "groups": [
-            {
-                "id": 2,
-                "specialization_abbreviation": "ИБА",
-                "course_number": 1,
-                "group_number": 1,
-                "display_text": "ИБА-11"
-            }
-        ]
-    }
-];
-
-
 class APIAdapter {
-    readSchedule() {
-        return scheduleReadExample;
+    headers;
+
+    constructor() {
+        this.headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2dpbjpzdHJpbmciLCJleHAiOjE2OTM" +
+                "yOTQxOTEsInNjb3BlcyI6WyJlZGl0X3NjaGVkdWxlIiwicmVhZF9zY2hlZHVsZSIsImFwcHJvdmVfaWRlbnRpZmljYXRpb25fcmV" +
+                "xdWVzdCJdfQ.pPQ79UjYfq7uH266s-kQ4ABLMaykm2OO7nsvg-QT-gI"
+        }
     }
 
-    resolveMention() {
+    readSchedule() {
+        return fetch(
+            'https://tomioka.ru:6078/v1/schedule/lessons/read',
+            { method: 'GET', headers: this.headers }
+        ).then( r => r.json() )
+    }
 
+    resolveMention(payload) {
+        return fetch(
+            'https://tomioka.ru:6078/v1/mentions/resolve',
+            { method: 'POST', headers: this.headers, body: JSON.stringify(payload) }
+        ).then( r => {
+            if (r.status === 400) {
+                return null;
+            } else {
+                return r.json();
+            }
+        } )
     }
 }
 

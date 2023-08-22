@@ -1,158 +1,164 @@
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {Tag} from "primereact/tag";
-
+import {AutoComplete} from "primereact/autocomplete";
 import './workspace.css';
 import Select from "react-select";
 import APIAdapter from "../adapters/api";
 
-
-function CustomizedSelect(props) {
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            background: '#fff',
-            borderColor: "white",
-            minHeight: '30px',
-            maxHeight: '1000px',
-            maxWidth: '220px',
-            boxShadow: state.isFocused ? null : null,
-            "&:hover": {
-                borderColor: "white"
-            },
-            padding: 'none',
-            marginRight: '20px',
-
-        }),
-
-        valueContainer: (provided, state) => ({
-            ...provided,
-            maxHeight: '100px',
-            maxWidth: '210px',
-            padding: 'none',
-        }),
-
-        input: (provided, state) => ({
-            ...provided,
-            margin: '0px',
-            maxHeight: '100px',
-            padding: 'none',
-        }),
-        indicatorSeparator: state => ({
-            display: 'none',
-            padding: 'none',
-        }),
-        indicatorsContainer: (provided, state) => ({
-            ...provided,
-            height: '30px',
-            display: 'none',
-            maxHeight: '100px',
-            padding: 'none',
-        }),
-
-    };
-
-    const filterOptions = (
-        candidate,
-        input
-    ) => {
-        return true;
-    };
-
-    return <Select
-        styles={customStyles}
-        filterOptions={filterOptions}
-        {...props}/>
-}
+import 'primereact/resources/themes/lara-light-blue/theme.css';   // theme
+import 'primereact/resources/primereact.css';
+import {useEffect, useState} from "react";                       // core css
 
 
-function LessonsTable({lessons}) {
+function LessonsTable({lessons, setLessons}) {
+    const [suggestions, setSuggestions] = useState([]);
+    const [currentDiscipline, setCurrentDiscipline] = useState(null);
+    const [currentAuditorium, setCurrentAuditorium] = useState(null);
+
     function groupsFormatter(lesson) {
-        return lesson.groups.map(
-            i => <CustomizedSelect
-                    placeholder="Группы"
-                    defaultValue={{value: 1, label: "ИБА-11"}}
-                    isSearchable="true"
-                    isMulti="true"/>
-        )
+        return (
+            <AutoComplete
+                field="display_text"
+                multiple
+                forceSelection
+                value={lesson.groups}
+                completeMethod={
+                    (e) => {
+                        const api = new APIAdapter()
+                        api.resolveMention({
+                            group_mention: e.query,
+                        }).then(data => {
+                                setSuggestions(data ? data.groups : [])
+                            }
+                        )
+                    }
+                }
+                suggestions={suggestions}
+                onChange={(e) => {
+                    lesson.groups.length = 0;
+                    lesson.groups.push(...e.value);
+                }
+                }/>
+        );
     }
 
     function teachersFormatter(lesson) {
-        return lesson.teachers.map(
-            i => <CustomizedSelect
-                options={[
-                    {value: 1, label: "1wdwdwd"},
-                    {value: 2, label: "3wdwdwdwdwdwdwdwdwd"},
-                    {value: 3, label: "3wdwd"},
-                ]}
-                placeholder="Преподаватели"
-                defaultValue={{value: 1, label: "1wddwd"}}
-                isSearchable="true"
-                isMulti="true"/>
-        )
+        return (
+            <AutoComplete
+                field="display_text"
+                multiple
+                forceSelection
+                value={lesson.teachers}
+                completeMethod={
+                    (e) => {
+                        const api = new APIAdapter()
+                        api.resolveMention({
+                            person_mention: e.query,
+                        }).then(data => {
+                                setSuggestions( data ? data.persons : [])
+                            }
+                        )
+                    }
+                }
+                suggestions={suggestions}
+                onChange={(e) => {
+                    lesson.teachers.length = 0;
+                    lesson.teachers.push(...e.value);
+                }
+                }/>
+        );
     }
 
     function timeCircumstanceFormatter(lesson) {
         return (
-            <CustomizedSelect
-                placeholder="Время"
-                defaultValue={{
-                    value: lesson.time_circumstance,
-                    label: lesson.time_circumstance.display_text
-            }}
-                isSearchable="true"/>
+            <AutoComplete forceSelection />
         );
     }
 
     function auditoriumFormatter(lesson) {
         return (
-            <CustomizedSelect
-                placeholder="Аудитория"
-                defaultValue={{
-                    value: lesson.auditorium,
-                    label: lesson.auditorium.display_text
+            <AutoComplete
+                field="display_text"
+                forceSelection
+                value={currentAuditorium === null ? lesson.auditorium : currentAuditorium}
+                completeMethod={
+                    (e) => {
+                        const api = new APIAdapter()
+                        api.resolveMention({
+                            auditorium_mention: e.query,
+                        }).then(data => {
+                                setSuggestions(data ? data.auditoriums : [])
+                            }
+                        )
+                    }
+                }
+                suggestions={suggestions}
+                onSubmit={
+                    () => setCurrentAuditorium(null)
+                }
+                onAbort={
+                    () => setCurrentAuditorium(null)
+                }
+                onChange={(e) => {
+                    setCurrentAuditorium(e.value);
                 }}
-                isSearchable="true"/>
+            />
         );
     }
 
     function disciplineFormatter(lesson) {
         return (
-            <CustomizedSelect
-                placeholder="Дисциплина"
-                defaultValue={{
-                    value: lesson.discipline,
-                    label: lesson.discipline.display_text
+            <AutoComplete
+                field="display_text"
+                forceSelection
+                value={currentDiscipline === null ? lesson.discipline : currentDiscipline}
+                completeMethod={
+                    (e) => {
+                        const api = new APIAdapter()
+                        api.resolveMention({
+                            discipline_mention: e.query,
+                        }).then(data => {
+                                setSuggestions(data ? data.disciplines : [])
+                            }
+                        )
+                    }
+                }
+                suggestions={suggestions}
+                onSubmit={
+                    () => setCurrentDiscipline(null)
+                }
+                onAbort={
+                    () => setCurrentDiscipline(null)
+                }
+                onChange={(e) => {
+                    setCurrentDiscipline(e.value);
                 }}
-                isSearchable="true"/>
+            />
         );
     }
 
     return (
         <DataTable
             value={lessons}
-            tableStyle={{ minWidth: '50rem' }}
+            tableStyle={{ minWidth: '50rem', }}
             showGridlines
         >
             <Column
                 field="time_circumstance"
                 header="Время"
-                style={{width: "130px", }}
                 body={timeCircumstanceFormatter} />
             <Column
                 field="auditorium"
                 header="Ауд."
-                style={{width: "100px",}}
                 body={auditoriumFormatter} />
             <Column
                 field="groups"
                 header="Группы"
-                style={{width: "120px", maxHeight: "100px",}}
                 body={groupsFormatter} />
             <Column
                 field="teachers"
                 header="Преподаватели"
-                style={{width: "240px", maxHeight: "100px"}}
                 body={teachersFormatter} />
             <Column
                 field="discipline"
@@ -173,8 +179,13 @@ function TableMultiselectComponent() {
 
 
 function Workspace() {
-    const gateway = new APIAdapter();
-    const lessons = gateway.readSchedule();
+    const [lessons, setLessons] = useState([]);
+    useEffect(() => {
+        const gateway = new APIAdapter();
+        gateway.readSchedule().then( data =>
+            setLessons(data)
+        )
+    }, [])
     return (
         <main>
             <LessonsTable lessons={lessons}/>

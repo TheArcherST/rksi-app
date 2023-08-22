@@ -2,16 +2,44 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 3vw;
     min-height: 70vh;
     font-size: 14px;
+    margin: 3vw 5vh;
 }
 
 .p-column-header-content {
     text-align: left;
 }
+
 td {
-    vertical-align: top;
-    horiz-align: left;
 
 }
+.p-autocomplete {
+    border: none;
+}
+.p-inputtext	{
+    border: none !important;
+}
+.p-inputtext:hover	{
+    outline: none !important;
+    border: none !important;
+}
+.p-inputtext:enabled:focus	{
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+
+/*
+.p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-input-token {
+    padding: 0 !important;
+}
+.p-autocomplete .p-autocomplete-multiple-container {
+    padding: 0 !important;
+}*/
