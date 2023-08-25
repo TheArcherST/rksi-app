@@ -12,15 +12,6 @@ function AppLogo() {
     );
 }
 
-const months = [
-    "февраль", "март", "апрель", "май",
-    "июнь", "июль", "август", "сентябрь",
-    "октябрь", "ноябрь", "декабрь"
-];
-const monthOptions = months.map(i => {return {value: months.indexOf(i), label: i}})
-const days = new Array(...(new Array(32)).keys()).slice(1);
-const dayOptions = days.map(i => {return {value: i, label: i}})
-
 
 function DateSelector({onDateChange}) {
     const [date, setDate] = useState(() => {

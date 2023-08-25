@@ -1,3 +1,15 @@
+import {ResolveMention, ResolveMentionResponse} from "../interfaces/resolveMention";
+
+export class APIError extends Error {
+
+}
+
+
+export class MentionSyntaxError extends APIError {
+
+}
+
+
 class APIAdapter {
     headers;
 
@@ -17,15 +29,15 @@ class APIAdapter {
         ).then( r => r.json() )
     }
 
-    resolveMention(payload) {
+    resolveMention(payload: ResolveMention) : Promise<ResolveMentionResponse> {
         return fetch(
             'https://tomioka.ru:6078/v1/mentions/resolve',
             { method: 'POST', headers: this.headers, body: JSON.stringify(payload) }
         ).then( r => {
             if (r.status === 400) {
-                return null;
+                throw MentionSyntaxError;
             } else {
-                return r.json();
+                return r.json()
             }
         } )
     }
