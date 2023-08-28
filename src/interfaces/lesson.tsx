@@ -1,16 +1,16 @@
 import Entity from "./entity";
-import Auditorium from "./auditorium";
-import Group from "./group";
-import Person from "./person";
-import Discipline from "./discipline";
+import AuditoriumDTO from "./auditorium";
+import GroupDTO from "./group";
+import PersonDTO from "./person";
+import DisciplineDTO from "./discipline";
+import ScheduleSectionDTO from "./scheduleSection";
 
 
-export default interface Lesson extends Entity {
-    starts_at: string;
-    ends_at: string;
-    groups: Group[];
-    teachers: Person[];
-    discipline: Discipline;
-    auditorium: Auditorium;
+export default interface LessonDTO extends Entity {
+    schedule_section: ScheduleSectionDTO;
+    groups: GroupDTO[];
+    teachers: PersonDTO[];
+    discipline: DisciplineDTO;
+    auditorium: AuditoriumDTO;
 
 };

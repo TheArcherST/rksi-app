@@ -2,18 +2,27 @@ import {AutoComplete} from "primereact/autocomplete";
 import {useState} from "react";
 
 import Entity from "../../interfaces/entity";
+import {en} from "chrono-node";
 
+
+function getArraysDiff(arr1: any[], arr2: any[]) {
+    return arr1
+        .filter(x => !arr2.includes(x))
+        .concat(arr2.filter(x => !arr1.includes(x)));
+}
 
 
 export default function CellMultiselect<T extends Entity>(
     {
         entitiesArray,
-        setEntitiesArray,
+        addEntity,
+        removeEntity,
         resolveEntitiesMention,
         ...props
     } : {
         entitiesArray: T[];
-        setEntitiesArray: ((entities: T[]) => any);
+        addEntity: (entity: T) => any;
+        removeEntity: (entity: T) => any;
         resolveEntitiesMention: (mention: string) => (Promise<T[]>);
     },
 ) {
@@ -35,8 +44,15 @@ export default function CellMultiselect<T extends Entity>(
             }
             suggestions={suggestions}
             onChange={(e) => {
-                let _elementsList = [...e.value];
-                setEntitiesArray(_elementsList);
+                let diff = getArraysDiff(entitiesArray, e.value);
+                if (diff) {
+                    const entity = diff[0];
+                    if (entitiesArray.length > e.value.length) {
+                        return removeEntity(entity);
+                    } else {
+                        return addEntity(entity);
+                    }
+                }
             }
             }
             {...props}/>

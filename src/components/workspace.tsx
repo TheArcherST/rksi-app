@@ -1,34 +1,52 @@
+import {useEffect, useState} from "react";
+
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-import {Tag} from "primereact/tag";
-import {AutoComplete} from "primereact/autocomplete";
-import './workspace.css';
-import Select from "react-select";
-import APIAdapter, {MentionSyntaxError} from "../adapters/api";
 
-import 'primereact/resources/themes/lara-light-blue/theme.css';   // theme
+import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.css';
-import {useEffect, useState} from "react";                       // core css
+
+import APIAdapter, {MentionSyntaxError} from "../adapters/api";
 
 import CellMultiselect from "./base/cellMultiselect";
 import CellSelect from "./base/cellSelect";
 
-import Lesson from "../interfaces/lesson";
-import Group from "../interfaces/group";
-import Person from "../interfaces/person";
-import Auditorium from "../interfaces/auditorium";
-import Discipline from "../interfaces/discipline";
+import LessonDTO from "../interfaces/lesson";
+import GroupDTO from "../interfaces/group";
+import PersonDTO from "../interfaces/person";
+import AuditoriumDTO from "../interfaces/auditorium";
+import DisciplineDTO from "../interfaces/discipline";
+
+import './workspace.css';
+
+import ScheduleTable, {
+    AttachGroupToLesson,
+    AttachTeacherToLesson,
+    DetachGroupFromLesson,
+    DetachTeacherFromLesson,
+    ReplaceLessonAuditorium,
+    ReplaceLessonDiscipline,
+    ReplaceLessonScheduleSection,
+    ScheduleDTO,
+    UpdateSchedule
+} from "../infrastructure/table";
+import ScheduleSectionDTO from "../interfaces/scheduleSection";
+import SaneDate from "../infrastructure/saneDate";
 
 
-type Current = {id: number, value: any};
-
-
-function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (lessons: Lesson[]) => any}) {
+function ScheduleTableView(
+    {
+        lessons, processUpdate, currentDate,
+    }: {
+        lessons: LessonDTO[],
+        processUpdate: (update: UpdateSchedule) => any,
+        currentDate: Date,
+    }) {
     const gateway = new APIAdapter();
 
-    function groupsFormatter(lesson: Lesson) {
+    function groupsFormatter(lesson: LessonDTO) {
         return (
-            <CellMultiselect<Group>
+            <CellMultiselect<GroupDTO>
                 entitiesArray={lesson.groups}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
@@ -40,18 +58,23 @@ function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (l
                         return [];
                     })
                 }}
-                setEntitiesArray={(value) => {
-                    lesson.groups.length = 0;
-                    lesson.groups.push(...value);
-                }
-                }
+                addEntity={(entity) => {
+                    processUpdate(
+                        new AttachGroupToLesson(lesson, entity)
+                    )
+                }}
+                removeEntity={(entity) => {
+                    processUpdate(
+                        new DetachGroupFromLesson(lesson, entity)
+                    )
+                }}
             />
         );
     }
 
-    function teachersFormatter(lesson: Lesson) {
+    function teachersFormatter(lesson: LessonDTO) {
         return (
-            <CellMultiselect<Person>
+            <CellMultiselect<PersonDTO>
                 entitiesArray={lesson.teachers}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
@@ -63,26 +86,57 @@ function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (l
                         return [];
                     })
                 }}
-                setEntitiesArray={(value) => {
-                    lesson.teachers.length = 0;
-                    lesson.teachers.push(...value);
-                }
-                }
+                addEntity={(entity) => {
+                    processUpdate(
+                        new AttachTeacherToLesson(lesson, entity)
+                    )
+                }}
+                removeEntity={(entity) => {
+                    processUpdate(
+                        new DetachTeacherFromLesson(lesson, entity)
+                    )
+                }}
             />
         );
     }
 
-    function timeCircumstanceFormatter(lesson: Lesson) {
+    function scheduleSectionFormatter(lesson: LessonDTO) {
         return (
-            <AutoComplete forceSelection />
+            <CellSelect<ScheduleSectionDTO>
+                entity={lesson.schedule_section}
+                setEntity={(entity) => {
+                    processUpdate(
+                        new ReplaceLessonScheduleSection(lesson, entity)
+                    );
+                }}
+                resolveEntitiesMention={(mention) => {
+                    return gateway.resolveMention(
+                        {
+                            schedule_section_mention: {
+                                "mention": mention,
+                                "date": new SaneDate(currentDate).toString(),
+                            }
+                        }
+                    ).then((data) => {
+                        return data.schedule_sections;
+                    }).catch((err) => {
+                        console.log(err);
+                        return [];
+                    })
+                }}
+            />
         );
     }
 
-    function auditoriumFormatter(lesson: Lesson) {
+    function auditoriumFormatter(lesson: LessonDTO) {
         return (
-            <CellSelect<Auditorium>
+            <CellSelect<AuditoriumDTO>
                 entity={lesson.auditorium}
-                setEntity={(entity) => {lesson.auditorium = entity}}
+                setEntity={(entity) => {
+                    processUpdate(
+                        new ReplaceLessonAuditorium(lesson, entity)
+                    );
+                }}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
                         {auditorium_mention: mention}
@@ -97,12 +151,14 @@ function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (l
         );
     }
 
-    function disciplineFormatter(lesson: Lesson) {
+    function disciplineFormatter(lesson: LessonDTO) {
         return (
-            <CellSelect<Discipline>
+            <CellSelect<DisciplineDTO>
                 entity={lesson.discipline}
                 setEntity={(entity) => {
-                    lesson.discipline = entity
+                    processUpdate(
+                        new ReplaceLessonDiscipline(lesson, entity)
+                    );
                 }}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
@@ -126,10 +182,10 @@ function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (l
             showGridlines
         >
             <Column
-                field="time_circumstance"
+                field="schedule_section"
                 header="Время"
-                body={timeCircumstanceFormatter}
-                className={"column-time-circumstance"} />
+                body={scheduleSectionFormatter}
+                className={"column-schedule-section"} />
             <Column
                 field="auditorium"
                 header="Ауд."
@@ -155,19 +211,55 @@ function LessonsTable({lessons, setLessons} : {lessons: Lesson[], setLessons: (l
 }
 
 
-function Workspace() {
-    const [lessons, setLessons] = useState<Lesson[]>([]);
+function Workspace(
+    {
+        currentDate, isSaveButtonPressed, setIsSaveInProgress, setIsSaveEnabled
+    }: {
+        currentDate: Date,
+        isSaveButtonPressed: boolean,
+        setIsSaveInProgress: (value: boolean) => any,
+        setIsSaveEnabled: (value: boolean) => any,
+    }) {
+    const [table, setTable] = useState<ScheduleTable | null>(null);
+    const [lessons, setLessons] = useState<LessonDTO[]>([]);
+
     useEffect(() => {
         const gateway = new APIAdapter();
-        gateway.readSchedule().then( data =>
-            setLessons(data)
-        )
-    }, [])
+        ScheduleTable.pull(gateway, currentDate).then(table => {
+            setTable(table);
+            setLessons(table.schedule.lessons);
+        })
+    }, [currentDate]);
+
+    useEffect(() => {
+        const gateway = new APIAdapter();
+        if (table !== null && isSaveButtonPressed) {
+            setIsSaveInProgress(true);
+            setIsSaveEnabled(false);
+            table.push(gateway).then(() => {
+                setIsSaveInProgress(false);
+            });
+        }
+    }, [isSaveButtonPressed])
+
     return (
         <main>
-            <LessonsTable
-                setLessons={setLessons}
-                lessons={lessons}/>
+            {
+                (table !== null) ?
+                    <ScheduleTableView
+                    lessons={lessons}
+                    processUpdate={(update) => {
+                        if (table !== null) {
+                            setIsSaveEnabled(true);
+                            table.addUpdate(update);
+                            table.redo();
+                            setLessons(Object.assign([], table.schedule.lessons));
+                        }
+                    }
+                    }
+                    currentDate={currentDate} />
+                : null
+            }
         </main>
     );
 }

@@ -36,14 +36,19 @@ export default function CellSelect<T extends Entity>(
             suggestions={suggestions}
             onAbort={() => {
                 setTempValue(null);
-
             }}
             onSubmit={(e) => {
-                console.log("E", e);
                 setTempValue(null);
             }}
             onChange={(e) => {
-                setTempValue(e.value);
+                if (e.value === null) {
+                    setTempValue(null);
+                } else if (!(e.value instanceof Object)) {
+                    setTempValue(e.value);
+                } else {
+                    setEntity(e.value);
+                    setTempValue(null);
+                }
             }}
             {...props}/>
     );

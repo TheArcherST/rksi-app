@@ -1,5 +1,5 @@
 import Entity from "./entity";
 
-export default interface Discipline extends Entity {
+export default interface DisciplineDTO extends Entity {
     name: string;
 }

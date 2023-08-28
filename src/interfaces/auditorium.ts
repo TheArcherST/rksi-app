@@ -1,6 +1,6 @@
 import Entity from "./entity";
 
-export default interface Auditorium extends Entity {
+export default interface AuditoriumDTO extends Entity {
     building_number: number;
     auditorium: string;
 }

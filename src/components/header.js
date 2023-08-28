@@ -13,11 +13,8 @@ function AppLogo() {
 }
 
 
-function DateSelector({onDateChange}) {
-    const [date, setDate] = useState(() => {
-        onDateChange();
-        return new Date();
-    });
+function DateSelector({currentDate, onDateChange}) {
+    const [date, setDate] = useState(currentDate);
 
     return (
         <div className={"head-date-selector"}>
@@ -39,30 +36,34 @@ function DateSelector({onDateChange}) {
 }
 
 
-function SaveButton({savingDisabled, savingInProgress, onClick}) {
+function SaveButton({savingDisabled, isSaveInProgress, onClick, onMouseUp}) {
     return (
         <Button
             className="save-button"
-            loading={savingInProgress}
+            loading={isSaveInProgress}
             disabled={savingDisabled}
-            onClick={onClick}>
+            onClick={onClick}
+            onMouseUp={onMouseUp}>
             Сохранить
         </Button>
     )
 }
 
 
-function Header({onDateChange, onSaveButtonClick,
-                    savingDisabled, savingInProgress}) {
+function Header({currentDate, onDateChange, setIsSaveButtonPressed,
+                    savingDisabled, isSaveInProgress}) {
     return (
         <header className="header">
             <AppLogo />
             <DateSelector
+                currentDate={currentDate}
                 onDateChange={onDateChange}/>
             <SaveButton
                 savingDisabled={savingDisabled}
-                savingInProgress={savingInProgress}
-                onClick={onSaveButtonClick} />
+                isSaveInProgress={isSaveInProgress}
+                onClick={() => {setIsSaveButtonPressed(true)}}
+                onMouseUp={() => {setIsSaveButtonPressed(false)}}
+            />
         </header>
     )
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import './App.css';
 
 import Header from './components/header.js';
@@ -10,15 +10,34 @@ import {locale} from "primereact/api";
 addRuLocale();
 
 
+function getDateWithoutTime() {
+    return new Date();
+}
+
+
 function App() {
     locale('ru');
+    let [currentDate, setCurrentDate] = useState(getDateWithoutTime());
+    let [isSaveInProgress, setIsSaveInProgress] = useState(false);
+    let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
+    let [isSaveEnabled, setIsSaveEnabled] = useState(false);
+
     return (
     <div className="App">
         <Header
-            onSaveButtonClick={hookSaveData}
-            onDateChange={hookDateChange}
+            currentDate={currentDate}
+            savingDisabled={!isSaveEnabled}
+            isSaveInProgress={isSaveInProgress}
+            setIsSaveButtonPressed={setIsSaveButtonPressed}
+            onDateChange={(e) => {
+                setCurrentDate(e.value)
+            }}
         />
-        <Workspace />
+        <Workspace currentDate={currentDate}
+                   setIsSaveInProgress={setIsSaveInProgress}
+                   isSaveButtonPressed={isSaveButtonPressed}
+                   setIsSaveEnabled={setIsSaveEnabled}
+        />
         <Footer />
     </div>
     );
