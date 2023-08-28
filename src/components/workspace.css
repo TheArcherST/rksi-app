@@ -75,3 +75,12 @@ td {
     padding: 0.175rem 0.55rem !important;
     margin-top: 0.1rem;
 }
+
+.table-empty-message > * {
+    font-size: 30px !important;
+}
+
+.table-empty-message {
+    margin: 10vw 1em;
+    text-align: center;
+}

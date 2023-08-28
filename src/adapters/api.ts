@@ -4,7 +4,12 @@ import {ScheduleDTO} from "../infrastructure/table";
 import SaneDate from "../infrastructure/saneDate";
 
 export class APIError extends Error {
+    status: number;
 
+    constructor(status: number) {
+        super();
+        this.status = status;
+    }
 }
 
 
@@ -24,7 +29,7 @@ class APIAdapter {
                 "Dg0MTQsInNjb3BlcyI6WyJyZWFkX3NjaGVkdWxlIiwiZWRpdF9zY2hlZHVsZSIsImFwcHJvdmVfaWRlbnRpZmljYXRpb25fcmVxdWV" +
                 "zdCJdfQ.GaqHVqLuW6po75pPZxuxXYhbJ9yNqp8RYVP1U87PSbs"
         };
-        this.baseUrl = "http://0.0.0.0:8000";
+        this.baseUrl = "https://tomioka.ru:6078";
     }
 
     readSchedule(date?: Date): Promise<ScheduleDTO> {
@@ -61,7 +66,11 @@ class APIAdapter {
             this.baseUrl + '/v1/schedule/edit',
             { method: 'POST', headers: this.headers, body: JSON.stringify(payload) }
         ).then( r => {
-            return r.json()
+            if (Math.floor(r.status / 100) !== 2) {
+                throw new APIError(r.status);
+            } else {
+                return r.json();
+            }
         });
     }
 }

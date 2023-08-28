@@ -3,4 +3,7 @@ export default interface Entity extends Object {
     display_text?: string;
 }
 
-let a: Entity ;
+
+export enum EntityMagicRuntimeState {
+    CREATED
+}

@@ -7,6 +7,10 @@ import Footer from "./components/footer";
 import addRuLocale from "./locale";
 import {locale} from "primereact/api";
 
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.css';
+
 addRuLocale();
 
 
@@ -20,13 +24,13 @@ function App() {
     let [currentDate, setCurrentDate] = useState(getDateWithoutTime());
     let [isSaveInProgress, setIsSaveInProgress] = useState(false);
     let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
-    let [isSaveEnabled, setIsSaveEnabled] = useState(false);
+    let [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
     return (
     <div className="App">
         <Header
             currentDate={currentDate}
-            savingDisabled={!isSaveEnabled}
+            isSaveDisabled={isSaveDisabled}
             isSaveInProgress={isSaveInProgress}
             setIsSaveButtonPressed={setIsSaveButtonPressed}
             onDateChange={(e) => {
@@ -36,7 +40,7 @@ function App() {
         <Workspace currentDate={currentDate}
                    setIsSaveInProgress={setIsSaveInProgress}
                    isSaveButtonPressed={isSaveButtonPressed}
-                   setIsSaveEnabled={setIsSaveEnabled}
+                   setIsSaveDisabled={setIsSaveDisabled}
         />
         <Footer />
     </div>

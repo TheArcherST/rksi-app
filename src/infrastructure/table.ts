@@ -1,7 +1,7 @@
 import LessonDTO from "../interfaces/lesson";
 import {
     ScheduleUpdateDTO,
-    EditScheduleResponseDTO
+    EditScheduleResponseDTO, CreateLessonDTO
 } from "../interfaces/api/editSchedule";
 import PersonDTO from "../interfaces/person";
 import GroupDTO from "../interfaces/group";
@@ -9,11 +9,17 @@ import ScheduleSectionDTO from "../interfaces/scheduleSection";
 import AuditoriumDTO from "../interfaces/auditorium";
 import DisciplineDTO from "../interfaces/discipline";
 import APIAdapter from "../adapters/api";
-import Entity from "../interfaces/entity";
+import Entity, {EntityMagicRuntimeState} from "../interfaces/entity";
+import SaneDate from "./saneDate";
 
 
 function removeEntityFromCollection<T extends Entity>(arr: T[], value: T) {
-    const presentedValue = arr.filter(i => i.id === value.id)[0]
+    let presentedValue: T = value;
+
+    if (presentedValue.id !== EntityMagicRuntimeState.CREATED) {
+        presentedValue = arr.filter(i => i.id === value.id)[0];
+    }
+
     let index = arr.indexOf(presentedValue);
     if (index > -1) {
         arr.splice(index, 1);
@@ -109,6 +115,10 @@ export class AttachTeacherToLesson implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -144,6 +154,10 @@ export class DetachTeacherFromLesson implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -179,6 +193,10 @@ export class AttachGroupToLesson implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -214,6 +232,10 @@ export class DetachGroupFromLesson implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -254,6 +276,10 @@ export class ReplaceLessonScheduleSection implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -293,6 +319,10 @@ export class ReplaceLessonAuditorium implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -333,6 +363,10 @@ export class ReplaceLessonDiscipline implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
+
         return [
             {
                 edit_lesson: {
@@ -353,8 +387,29 @@ export class ReplaceLessonDiscipline implements UpdateSchedule {
 export class CreateLesson implements UpdateSchedule {
     lesson: LessonDTO;
 
-    constructor(lesson: LessonDTO) {
-        this.lesson = lesson;
+    constructor() {
+        this.lesson = {
+            id: EntityMagicRuntimeState.CREATED,
+            schedule_section: {
+                id: EntityMagicRuntimeState.CREATED,
+                starts_at: "",
+                ends_at: "",
+                display_text: "",
+            },
+            groups: [],
+            teachers: [],
+            discipline: {
+                id: EntityMagicRuntimeState.CREATED,
+                name: "",
+                display_text: "",
+            },
+            auditorium: {
+                id: EntityMagicRuntimeState.CREATED,
+                building_number: -1,
+                auditorium: "",
+                display_text: "",
+            }
+        };
     }
 
     apply(schedule: ScheduleDTO) {
@@ -362,14 +417,17 @@ export class CreateLesson implements UpdateSchedule {
     }
 
     rollback(schedule: ScheduleDTO) {
-        removeEntityFromCollection(schedule.lessons, this.lesson);
+        removeEntityFromCollection(schedule.lessons, this.lesson)
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
         return [
             {
                 create_lesson: {
-                    schedule_section: this.lesson.schedule_section.id,
+                    schedule_section: {
+                        mention: this.lesson.schedule_section.display_text!,
+                        date: new SaneDate(new Date(this.lesson.schedule_section.starts_at)).toString()
+                    },
                     auditorium: this.lesson.auditorium.id,
                     discipline: this.lesson.discipline.id,
                     teachers: this.lesson.teachers.map(i => i.id),
@@ -384,7 +442,6 @@ export class CreateLesson implements UpdateSchedule {
         return null;
     }
 }
-
 
 
 export default class ScheduleTable {

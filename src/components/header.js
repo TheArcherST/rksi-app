@@ -36,12 +36,12 @@ function DateSelector({currentDate, onDateChange}) {
 }
 
 
-function SaveButton({savingDisabled, isSaveInProgress, onClick, onMouseUp}) {
+function SaveButton({isSaveDisabled, isSaveInProgress, onClick, onMouseUp}) {
     return (
         <Button
             className="save-button"
             loading={isSaveInProgress}
-            disabled={savingDisabled}
+            disabled={isSaveDisabled}
             onClick={onClick}
             onMouseUp={onMouseUp}
             style={{width: '8em'}}
@@ -53,7 +53,7 @@ function SaveButton({savingDisabled, isSaveInProgress, onClick, onMouseUp}) {
 
 
 function Header({currentDate, onDateChange, setIsSaveButtonPressed,
-                    savingDisabled, isSaveInProgress}) {
+                    isSaveDisabled, isSaveInProgress}) {
     return (
         <header className="header">
             <AppLogo />
@@ -61,7 +61,7 @@ function Header({currentDate, onDateChange, setIsSaveButtonPressed,
                 currentDate={currentDate}
                 onDateChange={onDateChange}/>
             <SaveButton
-                savingDisabled={savingDisabled}
+                isSaveDisabled={isSaveDisabled}
                 isSaveInProgress={isSaveInProgress}
                 onClick={() => {setIsSaveButtonPressed(true)}}
                 onMouseUp={() => {setIsSaveButtonPressed(false)}}

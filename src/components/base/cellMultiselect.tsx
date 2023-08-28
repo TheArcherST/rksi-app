@@ -27,7 +27,6 @@ export default function CellMultiselect<T extends Entity>(
     },
 ) {
     const [suggestions, setSuggestions] = useState<T[]>([]);
-
     return (
         <AutoComplete
             field={"display_text"}
