@@ -41,16 +41,20 @@ export interface UpdateSchedule {
      * Must be implemented method of generating API schema, and methods
      * to apply or rollback this update on existing schedule.
      *
-     * Note, that you MUST provide to method apply the same objects that
-     * you have within schedule object.
-     *
      * Methods MAY not ensure same elements order in arrays ofter rollback.
+     *
+     * Get lesson method must return edited lesson, if update assumes same
+     * lesson updating. Note, that create or delete is not update. This method
+     * MAY return non-edited version of lesson, if it were not applied on
+     * schedule, because this method **using only due schedule push**, so,
+     * all requested update objects will be applied.
      *
      * */
 
     apply(schedule: ScheduleDTO): void;
     rollback(schedule: ScheduleDTO): void;
     schema(quiet?: boolean | null): ScheduleUpdateDTO[];
+    getEditedLesson(): LessonDTO | null;
 }
 
 
@@ -79,6 +83,10 @@ export class DeleteLesson implements UpdateSchedule {
                 }
             }
         ]
+    }
+
+    getEditedLesson(): LessonDTO | null {
+        return null;
     }
 }
 
@@ -111,6 +119,10 @@ export class AttachTeacherToLesson implements UpdateSchedule {
             }
         ]
     }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
+    }
 }
 
 
@@ -141,6 +153,10 @@ export class DetachTeacherFromLesson implements UpdateSchedule {
                 }
             }
         ]
+    }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
     }
 }
 
@@ -173,6 +189,10 @@ export class AttachGroupToLesson implements UpdateSchedule {
             }
         ]
     }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
+    }
 }
 
 
@@ -203,6 +223,10 @@ export class DetachGroupFromLesson implements UpdateSchedule {
                 }
             }
         ]
+    }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
     }
 }
 
@@ -240,6 +264,10 @@ export class ReplaceLessonScheduleSection implements UpdateSchedule {
             }
         ]
     }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
+    }
 }
 
 export class ReplaceLessonAuditorium implements UpdateSchedule {
@@ -274,6 +302,10 @@ export class ReplaceLessonAuditorium implements UpdateSchedule {
                 }
             }
         ]
+    }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
     }
 }
 
@@ -311,6 +343,10 @@ export class ReplaceLessonDiscipline implements UpdateSchedule {
             }
         ]
     }
+
+    getEditedLesson(): LessonDTO | null {
+        return this.lesson;
+    }
 }
 
 
@@ -342,6 +378,10 @@ export class CreateLesson implements UpdateSchedule {
                 }
             }
         ]
+    }
+
+    getEditedLesson(): LessonDTO | null {
+        return null;
     }
 }
 
@@ -379,9 +419,7 @@ export default class ScheduleTable {
         let updatesSchemas = [];
         for (let i = 0; i <= this.headIndex; i++) {
             const update = this.updates[i];
-            const isLast = i === this.headIndex;
-            const isQuiet = !isLast;
-            updatesSchemas.push(...update.schema(isQuiet));
+            updatesSchemas.push(...update.schema());
         }
         this.updates = [];
         this.headIndex = -1;

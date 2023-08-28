@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
@@ -32,6 +32,7 @@ import ScheduleTable, {
 } from "../infrastructure/table";
 import ScheduleSectionDTO from "../interfaces/scheduleSection";
 import SaneDate from "../infrastructure/saneDate";
+import {Toast, ToastState} from "primereact/toast";
 
 
 function ScheduleTableView(
@@ -222,6 +223,7 @@ function Workspace(
     }) {
     const [table, setTable] = useState<ScheduleTable | null>(null);
     const [lessons, setLessons] = useState<LessonDTO[]>([]);
+    const schedulePullToast = useRef<any>(null);
 
     useEffect(() => {
         const gateway = new APIAdapter();
@@ -236,6 +238,12 @@ function Workspace(
         if (table !== null && isSaveButtonPressed) {
             setIsSaveInProgress(true);
             setIsSaveEnabled(false);
+            schedulePullToast.current!.show({
+                severity: 'success',
+                summary: 'Сохранено',
+                detail: 'Изменения успешно сохранены',
+                life: 3000,
+            });
             table.push(gateway).then(() => {
                 setIsSaveInProgress(false);
             });
@@ -244,6 +252,10 @@ function Workspace(
 
     return (
         <main>
+            <Toast
+                ref={schedulePullToast}
+                style={{marginTop: '5em'}}
+            />
             {
                 (table !== null) ?
                     <ScheduleTableView

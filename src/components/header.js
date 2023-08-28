@@ -43,7 +43,9 @@ function SaveButton({savingDisabled, isSaveInProgress, onClick, onMouseUp}) {
             loading={isSaveInProgress}
             disabled={savingDisabled}
             onClick={onClick}
-            onMouseUp={onMouseUp}>
+            onMouseUp={onMouseUp}
+            style={{width: '8em'}}
+        >
             Сохранить
         </Button>
     )
