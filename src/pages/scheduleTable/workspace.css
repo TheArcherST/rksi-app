@@ -1,4 +1,4 @@
-main {
+.workspace  {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,10 +7,10 @@ main {
     margin: 3vw 5vh;
 }
 
-main * {
+.workspace * {
     font-size: 13px !important;
 }
-.p-column-header-content {
+.workspace .p-column-header-content {
     text-align: left;
 }
 
@@ -18,24 +18,24 @@ td {
     vertical-align: top;
     horiz-align: left;
 }
-.p-autocomplete {
+.workspace .p-autocomplete {
     border: none;
 }
-.p-inputtext	{
+.workspace .p-inputtext	{
     border: none !important;
     background-color: transparent !important;
     cursor: pointer !important;
 }
-.p-inputtext:hover	{
+.workspace .p-inputtext:hover	{
     outline: none !important;
     border: none !important;
 }
-.p-inputtext:enabled:focus	{
+.workspace .p-inputtext:enabled:focus	{
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
 }
-.p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
+.workspace .p-autocomplete .p-autocomplete-multiple-container:not(.p-disabled).p-focus {
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
@@ -50,15 +50,15 @@ td {
     padding: 0 !important;
 }*/
 
-.p-datatable .p-datatable-tbody > tr > td {
+.workspace .p-datatable .p-datatable-tbody > tr > td {
     padding: 0 !important;
 }
 
-.p-autocomplete-input-token {
+.workspace .p-autocomplete-input-token {
     font-size: 13px;
     max-height: 0;
 }
-.p-autocomplete-input-token:focus-within {
+.workspace .p-autocomplete-input-token:focus-within {
     max-height: 100px;
 }
 
@@ -71,12 +71,12 @@ td {
 .column-discipline {
     max-width: 20em;
 }
-.p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
+.workspace .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
     padding: 0.175rem 0.55rem !important;
     margin-top: 0.1rem;
 }
 
-.table-empty-message > * {
+.workspace .table-empty-message > * {
     font-size: 30px !important;
 }
 

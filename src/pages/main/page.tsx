@@ -1,12 +1,21 @@
 import BaseHeader from "../../components/header/baseHeader";
 import Footer from "../../components/footer/footer";
+import {Button} from "primereact/button";
+
+import Main from './main';
 
 
 function MainPage() {
     return (
         <>
             <BaseHeader />
-            <Footer />
+            <Main />
+            <Footer
+                pin={true}
+                style={{
+                    height: '20vh',
+                }}
+            />
         </>
     );
 }

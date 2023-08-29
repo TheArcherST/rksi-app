@@ -2,6 +2,7 @@ import {ResolveMention, ResolveMentionResponse} from "../interfaces/api/resolveM
 import {EditScheduleDTO, EditScheduleResponseDTO} from "../interfaces/api/editSchedule";
 import {ScheduleDTO} from "../infrastructure/table";
 import SaneDate from "../infrastructure/saneDate";
+import {TokenDTO, TokenResponseDTO} from "../interfaces/api/token";
 
 export class APIError extends Error {
     status: number;
@@ -14,6 +15,10 @@ export class APIError extends Error {
 
 
 export class MentionSyntaxError extends APIError {
+
+}
+
+export class InvalidUsernameOrPassword extends APIError {
 
 }
 
@@ -69,6 +74,29 @@ class APIAdapter {
                 return r.json();
             }
         });
+    }
+
+    token(payload: TokenDTO): Promise<TokenResponseDTO> {
+        return fetch(
+            this.baseUrl + '/v1/token',
+            { method: 'POST',
+                headers: Object.assign(this.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
+                body: new URLSearchParams(
+                    {
+                        "username": payload.username,
+                        "password": payload.password,
+                    })
+            }
+        ).then(r => {
+            if (r.status === 200) {
+                return r.json()
+            } else {
+                throw new InvalidUsernameOrPassword(r.status);
+            }
+        }).then(data => {
+            this.headers.Authorization = `${data.token_type} ${data.access_token}`
+            return data;
+        })
     }
 }
 

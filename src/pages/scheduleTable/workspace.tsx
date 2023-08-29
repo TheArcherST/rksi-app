@@ -15,8 +15,6 @@ import AuditoriumDTO from "../../interfaces/auditorium";
 import DisciplineDTO from "../../interfaces/discipline";
 import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 
-import './workspace.css';
-
 import ScheduleTable, {
     AttachGroupToLesson,
     AttachTeacherToLesson, CreateLesson, DeleteLesson,
@@ -30,6 +28,8 @@ import ScheduleTable, {
 import SaneDate from "../../infrastructure/saneDate";
 import {Toast} from "primereact/toast";
 import {Button} from "primereact/button";
+
+import './workspace.css';
 
 
 function ScheduleTableView(
@@ -196,6 +196,7 @@ function ScheduleTableView(
             value={lessons}
             tableStyle={{ minWidth: '50rem', }}
             showGridlines
+            className={"schedule-table"}
             emptyMessage={
             <div className={"table-empty-message"}>
                 <b>Пока занятий нет</b>
@@ -303,7 +304,7 @@ function Workspace(
     }
 
     return (
-        <main>
+        <main className={"workspace"}>
             <Toast
                 ref={schedulePullToast}
                 style={{marginTop: '5em'}}
