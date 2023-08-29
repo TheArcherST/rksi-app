@@ -60,7 +60,7 @@ export interface UpdateSchedule {
     apply(schedule: ScheduleDTO): void;
     rollback(schedule: ScheduleDTO): void;
     schema(quiet?: boolean | null): ScheduleUpdateDTO[];
-    getEditedLesson(): LessonDTO | null;
+    getRelatedLesson(): LessonDTO | null;
 }
 
 
@@ -81,6 +81,9 @@ export class DeleteLesson implements UpdateSchedule {
     }
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
+        if (this.lesson.id === EntityMagicRuntimeState.CREATED) {
+            return [];
+        }
         return [
             {
                 delete_lesson: {
@@ -91,8 +94,8 @@ export class DeleteLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
-        return null;
+    getRelatedLesson(): LessonDTO | null {
+        return this.lesson;
     }
 }
 
@@ -130,7 +133,7 @@ export class AttachTeacherToLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -169,7 +172,7 @@ export class DetachTeacherFromLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -208,7 +211,7 @@ export class AttachGroupToLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -247,7 +250,7 @@ export class DetachGroupFromLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -291,7 +294,7 @@ export class ReplaceLessonScheduleSection implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -334,7 +337,7 @@ export class ReplaceLessonAuditorium implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -378,7 +381,7 @@ export class ReplaceLessonDiscipline implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
+    getRelatedLesson(): LessonDTO | null {
         return this.lesson;
     }
 }
@@ -438,8 +441,8 @@ export class CreateLesson implements UpdateSchedule {
         ]
     }
 
-    getEditedLesson(): LessonDTO | null {
-        return null;
+    getRelatedLesson(): LessonDTO | null {
+        return this.lesson;
     }
 }
 
@@ -471,18 +474,39 @@ export default class ScheduleTable {
         }
     }
 
-    push(client: APIAdapter): Promise<EditScheduleResponseDTO> {
-        this.updates.length = this.headIndex + 1;
+    getUpdateSchemas(): ScheduleUpdateDTO[] {
         let updatesSchemas = [];
         for (let i = 0; i <= this.headIndex; i++) {
             const update = this.updates[i];
+
+            // code block below checks for some not-delete updates had been applied
+            // to objects, that actually not exists at the moment.
+            if (!(update instanceof DeleteLesson)) {
+                const relatedLesson = update.getRelatedLesson();
+                if (relatedLesson) {
+                    if (this.schedule.lessons.indexOf(relatedLesson) === -1) {
+                        continue
+                    }
+                }
+            }
+
             updatesSchemas.push(...update.schema());
         }
+        return updatesSchemas;
+    }
+
+    push(client: APIAdapter): Promise<EditScheduleResponseDTO> {
+        const updatesSchemas = this.getUpdateSchemas();
+        const [updates, headIndex] = [[...this.updates], this.headIndex];
         this.updates = [];
         this.headIndex = -1;
         return client.editSchedule(
             {updates: updatesSchemas}
-        )
+        ).catch((err) => {
+            this.updates = updates;
+            this.headIndex = headIndex;
+            throw err;
+        })
     }
 
     static pull(client: APIAdapter, date: Date): Promise<ScheduleTable> {

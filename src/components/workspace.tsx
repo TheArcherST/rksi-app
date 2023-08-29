@@ -290,9 +290,10 @@ function Workspace(
 
     const handleProcessUpdate = (update: UpdateSchedule) => {
         if (table !== null) {
-            setIsSaveDisabled(false);
             table.addUpdate(update);
             table.redo();
+            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
+            setIsSaveDisabled(!isUpdatesPending);
             setLessons(Object.assign([], table.schedule.lessons));
         }
     }
