@@ -108,7 +108,7 @@ export function LoginForm() {
 
 export default function Main() {
     return (
-        <main>
+        <main className={"login-main"}>
             <h1>Вход в аккаунт</h1>
             <LoginForm />
         </main>

@@ -11,7 +11,6 @@ function MainPage() {
             <BaseHeader />
             <Main />
             <Footer
-                pin={true}
                 style={{
                     height: '20vh',
                 }}
