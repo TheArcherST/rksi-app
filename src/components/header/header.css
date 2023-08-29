@@ -9,11 +9,6 @@
     padding: 10px 40px;
 }
 
-.save-button {
-    align-self: center;
-    margin-right: 4vw;
-}
-
 .logo {
     color: #FFF;
     font-family: Montserrat, serif;
@@ -21,16 +16,6 @@
     font-style: normal;
     font-weight: 800;
     line-height: normal;
-}
-
-.head-date-selector {
-    display: flex;
-    flex-direction: row;
-    align-self: center;
-}
-
-.head-date-selector>.box {
-    margin: 5px;
 }
 
 a {

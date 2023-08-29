@@ -3,17 +3,17 @@ import {useEffect, useRef, useState} from "react";
 import {DataTable} from "primereact/datatable";
 import {Column, ColumnBodyOptions} from "primereact/column";
 
-import APIAdapter, {APIError, MentionSyntaxError} from "../adapters/api";
+import APIAdapter, {APIError} from "../../adapters/api";
 
-import CellMultiselect from "./base/cellMultiselect";
-import CellSelect from "./base/cellSelect";
+import CellMultiselect from "../../components/table/cellMultiselect";
+import CellSelect from "../../components/table/cellSelect";
 
-import LessonDTO from "../interfaces/lesson";
-import GroupDTO from "../interfaces/group";
-import PersonDTO from "../interfaces/person";
-import AuditoriumDTO from "../interfaces/auditorium";
-import DisciplineDTO from "../interfaces/discipline";
-import ScheduleSectionDTO from "../interfaces/scheduleSection";
+import LessonDTO from "../../interfaces/lesson";
+import GroupDTO from "../../interfaces/group";
+import PersonDTO from "../../interfaces/person";
+import AuditoriumDTO from "../../interfaces/auditorium";
+import DisciplineDTO from "../../interfaces/discipline";
+import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 
 import './workspace.css';
 
@@ -25,11 +25,10 @@ import ScheduleTable, {
     ReplaceLessonAuditorium,
     ReplaceLessonDiscipline,
     ReplaceLessonScheduleSection,
-    ScheduleDTO,
     UpdateSchedule
-} from "../infrastructure/table";
-import SaneDate from "../infrastructure/saneDate";
-import {Toast, ToastState} from "primereact/toast";
+} from "../../infrastructure/table";
+import SaneDate from "../../infrastructure/saneDate";
+import {Toast} from "primereact/toast";
 import {Button} from "primereact/button";
 
 
@@ -177,8 +176,7 @@ function ScheduleTableView(
         );
     }
 
-    function deleteButtonTemplate(lesson: LessonDTO, options: ColumnBodyOptions) {
-
+    function deleteButtonTemplate(lesson: LessonDTO, _options: ColumnBodyOptions) {
         return (
             <Button
                 type="button"
@@ -237,15 +235,21 @@ function ScheduleTableView(
 }
 
 
+export interface WorkspaceProps {
+    currentDate: Date;
+    isSaveInProgress: boolean;
+    setIsSaveInProgress: (value: boolean) => any;
+    isSaveButtonPressed: boolean;
+    setIsSaveDisabled: (value: boolean) => any;
+}
+
+
+
 function Workspace(
     {
         currentDate, isSaveButtonPressed, setIsSaveInProgress, setIsSaveDisabled
-    }: {
-        currentDate: Date,
-        isSaveButtonPressed: boolean,
-        setIsSaveInProgress: (value: boolean) => any,
-        setIsSaveDisabled: (value: boolean) => any,
-    }) {
+    }: WorkspaceProps
+) {
     const [table, setTable] = useState<ScheduleTable | null>(null);
     const [lessons, setLessons] = useState<LessonDTO[]>([]);
     const schedulePullToast = useRef<any>(null);
@@ -324,14 +328,6 @@ function Workspace(
             }
         </main>
     );
-}
-
-export function hookSaveData() {
-
-}
-
-export function hookDateChange() {
-
 }
 
 

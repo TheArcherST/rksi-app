@@ -1,0 +1,14 @@
+.save-button {
+    align-self: center;
+    margin-right: 4vw;
+}
+
+.head-date-selector {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+}
+
+.head-date-selector>.box {
+    margin: 5px;
+}
