@@ -94,7 +94,6 @@ class APIAdapter {
             }
         }).then(data => {
             APIAdapter.headers.Authorization = `${data.token_type} ${data.access_token}`
-            console.log(APIAdapter.headers);
             return data;
         })
     }

@@ -43,13 +43,14 @@ export function LoginForm() {
             gateway.token({
                 username: data.username,
                 password: data.password,
+            }).then(data => {
+                console.log('2')
+                formik.resetForm();
+                navigate('/schedule');
             }).catch(err => {
                 if (err instanceof InvalidUsernameOrPassword) {
                     showIncorrect();
                 }
-            }).then(data => {
-                formik.resetForm();
-                navigate('/schedule');
             })
         }
     });
@@ -68,7 +69,10 @@ export function LoginForm() {
         <div className="card flex justify-content-center">
             <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2">
                 <label htmlFor="username">Логин</label>
-                <Toast ref={toast} />
+                <Toast
+                    ref={toast}
+                    style={{marginTop: '5em'}}
+                />
                 <InputText
                     id="username"
                     name="username"
