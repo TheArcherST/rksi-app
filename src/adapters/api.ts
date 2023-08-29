@@ -30,7 +30,7 @@ class APIAdapter {
     constructor() {
         this.headers = {
             "Content-Type": "application/json",
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2dpbjpzdHJpbmciLCJleHAiOjE2OTM4NTM1MDksInNjb3BlcyI6WyJlZGl0X3NjaGVkdWxlIiwicmVhZF9zY2hlZHVsZSIsImFwcHJvdmVfaWRlbnRpZmljYXRpb25fcmVxdWVzdCJdfQ.ERa3SZlperOzX2wHkmIofOcsqC--lJw6xR9LHCchTc0'        };
+        }
         this.baseUrl = "https://tomioka.ru:6078";
     }
 
