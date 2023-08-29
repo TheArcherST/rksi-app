@@ -1,0 +1,8 @@
+services:
+  client:
+    build: .
+    container_name: rksi_app_frontend
+    ports:
+      - '442:442'
+    volumes:
+      - './config:/config'
