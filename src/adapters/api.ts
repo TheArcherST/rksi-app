@@ -24,7 +24,7 @@ export class InvalidUsernameOrPassword extends APIError {
 
 
 class APIAdapter {
-    headers;
+    headers: any;
     baseUrl;
 
     constructor() {
