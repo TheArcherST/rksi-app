@@ -24,14 +24,12 @@ export class InvalidUsernameOrPassword extends APIError {
 
 
 class APIAdapter {
-    headers: any;
-    baseUrl;
+    static headers: any = {
+        "Content-Type": "application/json",
+    };
+    static baseUrl = "https://tomioka.ru:6078";
 
     constructor() {
-        this.headers = {
-            "Content-Type": "application/json",
-        }
-        this.baseUrl = "https://tomioka.ru:6078";
     }
 
     readSchedule(date?: Date): Promise<ScheduleDTO> {
@@ -45,15 +43,15 @@ class APIAdapter {
             })
         }
         return fetch(
-            this.baseUrl + '/v1/schedule/read?' + new URLSearchParams(params),
-            { method: 'GET', headers: this.headers }
+            APIAdapter.baseUrl + '/v1/schedule/read?' + new URLSearchParams(params),
+            { method: 'GET', headers: APIAdapter.headers }
         ).then(r => r.json());
     }
 
     resolveMention(payload: ResolveMention) : Promise<ResolveMentionResponse> {
         return fetch(
-            this.baseUrl + '/v1/mentions/resolve',
-            { method: 'POST', headers: this.headers, body: JSON.stringify(payload) }
+            APIAdapter.baseUrl + '/v1/mentions/resolve',
+            { method: 'POST', headers: APIAdapter.headers, body: JSON.stringify(payload) }
         ).then( r => {
             if (r.status === 400) {
                 throw MentionSyntaxError;
@@ -65,8 +63,8 @@ class APIAdapter {
 
     editSchedule(payload: EditScheduleDTO): Promise<EditScheduleResponseDTO> {
         return fetch(
-            this.baseUrl + '/v1/schedule/edit',
-            { method: 'POST', headers: this.headers, body: JSON.stringify(payload) }
+            APIAdapter.baseUrl + '/v1/schedule/edit',
+            { method: 'POST', headers: APIAdapter.headers, body: JSON.stringify(payload) }
         ).then( r => {
             if (Math.floor(r.status / 100) !== 2) {
                 throw new APIError(r.status);
@@ -78,13 +76,14 @@ class APIAdapter {
 
     token(payload: TokenDTO): Promise<TokenResponseDTO> {
         return fetch(
-            this.baseUrl + '/v1/token',
+            APIAdapter.baseUrl + '/v1/token',
             { method: 'POST',
-                headers: Object.assign(this.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
+                headers: Object.assign(APIAdapter.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
                 body: new URLSearchParams(
                     {
                         "username": payload.username,
                         "password": payload.password,
+                        "scope": "edit_schedule read_schedule approve_identification_request"
                     })
             }
         ).then(r => {
@@ -94,7 +93,8 @@ class APIAdapter {
                 throw new InvalidUsernameOrPassword(r.status);
             }
         }).then(data => {
-            this.headers.Authorization = `${data.token_type} ${data.access_token}`
+            APIAdapter.headers.Authorization = `${data.token_type} ${data.access_token}`
+            console.log(APIAdapter.headers);
             return data;
         })
     }
