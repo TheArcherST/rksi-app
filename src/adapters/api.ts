@@ -49,6 +49,7 @@ class APIAdapter {
     }
 
     resolveMention(payload: ResolveMention) : Promise<ResolveMentionResponse> {
+        console.log(payload);
         return fetch(
             APIAdapter.baseUrl + '/v1/mentions/resolve',
             { method: 'POST', headers: APIAdapter.headers, body: JSON.stringify(payload) }
@@ -78,7 +79,7 @@ class APIAdapter {
         return fetch(
             APIAdapter.baseUrl + '/v1/token',
             { method: 'POST',
-                headers: Object.assign(APIAdapter.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
+                headers: Object.assign({}, APIAdapter.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
                 body: new URLSearchParams(
                     {
                         "username": payload.username,
