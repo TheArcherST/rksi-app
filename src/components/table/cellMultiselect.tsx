@@ -2,6 +2,8 @@ import {AutoComplete} from "primereact/autocomplete";
 import {useEffect, useState} from "react";
 
 import Entity from "../../interfaces/entity";
+import * as React from "react";
+import {Button} from "primereact/button";
 
 
 function getArraysDiff(arr1: any[], arr2: any[]) {
@@ -11,30 +13,25 @@ function getArraysDiff(arr1: any[], arr2: any[]) {
 }
 
 
-export default function CellMultiselect<T extends Entity>(
-    {
-        entitiesArray,
-        addEntity,
-        removeEntity,
-        resolveEntitiesMention,
-        ...props
-    } : {
-        entitiesArray: T[];
-        addEntity: (entity: T) => any;
-        removeEntity: (entity: T) => any;
-        resolveEntitiesMention: (mention: string) => (Promise<T[]>);
-    },
-) {
+interface CellMultiselectProps<T> {
+    entitiesArray: T[];
+    addEntity: (entity: T) => any;
+    removeEntity: (entity: T) => any;
+    resolveEntitiesMention: (mention: string) => (Promise<T[]>);
+}
+
+
+export default function CellMultiselect<T extends Entity>(props: CellMultiselectProps<T>) {
     const [suggestions, setSuggestions] = useState<T[]>([]);
     return (
         <AutoComplete
             field={"display_text"}
             multiple
             forceSelection
-            value={entitiesArray}
+            value={props.entitiesArray}
             completeMethod={
                 (e) => {
-                    resolveEntitiesMention(e.query)
+                    props.resolveEntitiesMention(e.query)
                         .then(entities => {
                             setSuggestions(entities)
                         })
@@ -42,17 +39,16 @@ export default function CellMultiselect<T extends Entity>(
             }
             suggestions={suggestions}
             onChange={(e) => {
-                let diff = getArraysDiff(entitiesArray, e.value);
+                let diff = getArraysDiff(props.entitiesArray, e.value);
                 if (diff) {
                     const entity = diff[0];
-                    if (entitiesArray.length > e.value.length) {
-                        return removeEntity(entity);
+                    if (props.entitiesArray.length > e.value.length) {
+                        return props.removeEntity(entity);
                     } else {
-                        return addEntity(entity);
+                        return props.addEntity(entity);
                     }
                 }
             }
-            }
-            {...props}/>
+            }/>
     );
 }

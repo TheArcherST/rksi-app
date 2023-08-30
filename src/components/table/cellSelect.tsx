@@ -5,29 +5,23 @@ import Entity from "../../interfaces/entity";
 import {en} from "chrono-node";
 
 
+interface CellSelectProps<T> {
+    entity: T;
+    setEntity: ((entity: T) => any);
+    resolveEntitiesMention: (mention: string) => (Promise<T[]>);
+}
 
-export default function CellSelect<T extends Entity>(
-    {
-        entity,
-        setEntity,
-        resolveEntitiesMention,
-        ...props
-    } : {
-        entity: T;
-        setEntity: ((entity: T) => any);
-        resolveEntitiesMention: (mention: string) => (Promise<T[]>);
-    },
-) {
+export default function CellSelect<T extends Entity>(props: CellSelectProps<T>) {
     const [suggestions, setSuggestions] = useState<T[]>([]);
     const [tempValue, setTempValue] = useState<string | null>(null);
     return (
         <AutoComplete
             field={"display_text"}
             forceSelection
-            value={tempValue !== null ? tempValue : entity}
+            value={tempValue !== null ? tempValue : props.entity}
             completeMethod={
                 (e) => {
-                    resolveEntitiesMention(e.query)
+                    props.resolveEntitiesMention(e.query)
                         .then(entities => {
                             setSuggestions(entities)
                         })
@@ -46,10 +40,9 @@ export default function CellSelect<T extends Entity>(
                 } else if (!(e.value instanceof Object)) {
                     setTempValue(e.value);
                 } else {
-                    setEntity(e.value);
+                    props.setEntity(e.value);
                     setTempValue(null);
                 }
-            }}
-            {...props}/>
+            }}/>
     );
 }

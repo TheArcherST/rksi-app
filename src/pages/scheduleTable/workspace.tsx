@@ -33,14 +33,14 @@ import './workspace.css';
 import {useHotkeys} from "react-hotkeys-hook";
 
 
-function ScheduleTableView(
-    {
-        lessons, processUpdate, currentDate,
-    }: {
-        lessons: LessonDTO[],
-        processUpdate: (update: UpdateSchedule) => any,
-        currentDate: Date,
-    }) {
+interface ScheduleTableViewProps {
+    lessons: LessonDTO[];
+    processUpdate: (update: UpdateSchedule) => any;
+    currentDate: Date;
+}
+
+
+function ScheduleTableView(props: ScheduleTableViewProps) {
     const gateway = new APIAdapter();
 
     function groupsFormatter(lesson: LessonDTO) {
@@ -58,12 +58,12 @@ function ScheduleTableView(
                     })
                 }}
                 addEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new AttachGroupToLesson(lesson, entity)
                     )
                 }}
                 removeEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new DetachGroupFromLesson(lesson, entity)
                     )
                 }}
@@ -86,12 +86,12 @@ function ScheduleTableView(
                     })
                 }}
                 addEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new AttachTeacherToLesson(lesson, entity)
                     )
                 }}
                 removeEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new DetachTeacherFromLesson(lesson, entity)
                     )
                 }}
@@ -104,7 +104,7 @@ function ScheduleTableView(
             <CellSelect<ScheduleSectionDTO>
                 entity={lesson.schedule_section}
                 setEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new ReplaceLessonScheduleSection(lesson, entity)
                     );
                 }}
@@ -113,7 +113,7 @@ function ScheduleTableView(
                         {
                             schedule_section_mention: {
                                 "mention": mention,
-                                "date": new SaneDate(currentDate).toString(),
+                                "date": new SaneDate(props.currentDate).toString(),
                             }
                         }
                     ).then((data) => {
@@ -136,7 +136,7 @@ function ScheduleTableView(
             <CellSelect<AuditoriumDTO>
                 entity={lesson.auditorium}
                 setEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new ReplaceLessonAuditorium(lesson, entity)
                     );
                 }}
@@ -159,7 +159,7 @@ function ScheduleTableView(
             <CellSelect<DisciplineDTO>
                 entity={lesson.discipline}
                 setEntity={(entity) => {
-                    processUpdate(
+                    props.processUpdate(
                         new ReplaceLessonDiscipline(lesson, entity)
                     );
                 }}
@@ -185,7 +185,7 @@ function ScheduleTableView(
                 style={{color: "red"}}
                 className="p-button-sm p-button-text"
                 onClick={() => {
-                    processUpdate(
+                    props.processUpdate(
                         new DeleteLesson(lesson)
                     )
                 }} />
@@ -194,7 +194,7 @@ function ScheduleTableView(
 
     return (
         <DataTable
-            value={lessons}
+            value={props.lessons}
             tableStyle={{ minWidth: '50rem', }}
             showGridlines
             className={"schedule-table"}
@@ -248,18 +248,14 @@ export interface WorkspaceProps {
 
 
 
-function Workspace(
-    {
-        currentDate, isSaveButtonPressed, setIsSaveInProgress, setIsSaveDisabled, buildingNumbers
-    }: WorkspaceProps
-) {
+function Workspace(props: WorkspaceProps) {
     const [table, setTable] = useState<ScheduleTable | null>(null);
     const [lessons, setLessons] = useState<LessonDTO[]>([]);
     const schedulePullToast = useRef<any>(null);
 
     function reloadTable() {
         const gateway = new APIAdapter();
-        ScheduleTable.pull(gateway, currentDate, buildingNumbers).then(table => {
+        ScheduleTable.pull(gateway, props.currentDate, props.buildingNumbers).then(table => {
             setTable(table);
             setLessons(table.schedule.lessons);
         })
@@ -269,7 +265,7 @@ function Workspace(
         if (table !== null) {
             table.undo();
             const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
-            setIsSaveDisabled(!isUpdatesPending);
+            props.setIsSaveDisabled(!isUpdatesPending);
             setLessons(Object.assign([], table.schedule.lessons));
         }
     })
@@ -277,19 +273,19 @@ function Workspace(
         if (table !== null) {
             table.redo();
             const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
-            setIsSaveDisabled(!isUpdatesPending);
+            props.setIsSaveDisabled(!isUpdatesPending);
             setLessons(Object.assign([], table.schedule.lessons));
         }
     })
 
 
-    useEffect(reloadTable, [currentDate, buildingNumbers]);
+    useEffect(reloadTable, [props.currentDate, props.buildingNumbers]);
 
     useEffect(() => {
         const gateway = new APIAdapter();
-        if (table !== null && isSaveButtonPressed) {
-            setIsSaveInProgress(true);
-            setIsSaveDisabled(true);
+        if (table !== null && props.isSaveButtonPressed) {
+            props.setIsSaveInProgress(true);
+            props.setIsSaveDisabled(true);
             table.push(gateway).then(() => {
                 schedulePullToast.current!.show({
                     severity: 'success',
@@ -308,17 +304,17 @@ function Workspace(
                     });
                 }
             }).finally(() => {
-                setIsSaveInProgress(false);
+                props.setIsSaveInProgress(false);
             });
         }
-    }, [isSaveButtonPressed])
+    }, [props.isSaveButtonPressed])
 
     const handleProcessUpdate = (update: UpdateSchedule) => {
         if (table !== null) {
             table.addUpdate(update);
             table.redo();
             const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
-            setIsSaveDisabled(!isUpdatesPending);
+            props.setIsSaveDisabled(!isUpdatesPending);
             setLessons(Object.assign([], table.schedule.lessons));
         }
     }
@@ -344,7 +340,7 @@ function Workspace(
                     <ScheduleTableView
                     lessons={lessons}
                     processUpdate={handleProcessUpdate}
-                    currentDate={currentDate} />
+                    currentDate={props.currentDate} />
                 : null
             }
         </main>
