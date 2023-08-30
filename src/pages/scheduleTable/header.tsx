@@ -7,6 +7,7 @@ import {Calendar, CalendarChangeEvent} from "primereact/calendar";
 import BaseHeader from "../../components/header/baseHeader";
 
 import './header.css';
+import {SelectButton} from "primereact/selectbutton";
 
 
 interface DateSelectorProps {
@@ -73,19 +74,50 @@ function SaveButton(
 }
 
 
+interface BuildingNumberSelectorProps {
+    buildingNumbers: number[];
+    setBuildingNumbers: (value: number[]) => any;
+}
+
+
+function BuildingNumberSelector(
+    {buildingNumbers, setBuildingNumbers}: BuildingNumberSelectorProps
+) {
+    const items = [
+        { name: 'Корпус 1', value: 1 },
+        { name: 'Корпус 2', value: 2 },
+    ];
+
+    return (
+        <div className="card flex justify-content-center">
+            <SelectButton
+                value={buildingNumbers}
+                onChange={(e) => {
+                    setBuildingNumbers(e.value);
+                }}
+                optionLabel="name"
+                options={items}
+                multiple />
+        </div>
+    );
+}
+
+
 interface HeaderProps {
     currentDate: Date;
     setDate: (value: Date) => any;
     setIsSaveButtonPressed: (value: boolean) => any;
     isSaveDisabled: boolean;
     isSaveInProgress: boolean;
+    buildingNumbers: number[];
+    setBuildingNumbers: (value: number[]) => any;
 }
 
 
 function Header(
     {
         currentDate, setDate, setIsSaveButtonPressed,
-        isSaveDisabled, isSaveInProgress
+        isSaveDisabled, isSaveInProgress, buildingNumbers, setBuildingNumbers
     }: HeaderProps
     ) {
     return (
@@ -93,6 +125,10 @@ function Header(
             <DateSelector
                 currentDate={currentDate}
                 setDate={setDate}/>
+            <BuildingNumberSelector
+                buildingNumbers={buildingNumbers}
+                setBuildingNumbers={setBuildingNumbers}
+                 />
             <SaveButton
                 isSaveDisabled={isSaveDisabled}
                 isSaveInProgress={isSaveInProgress}

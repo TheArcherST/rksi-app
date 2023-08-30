@@ -509,8 +509,8 @@ export default class ScheduleTable {
         })
     }
 
-    static pull(client: APIAdapter, date: Date): Promise<ScheduleTable> {
-        return client.readSchedule(date).then(schedule => {
+    static pull(client: APIAdapter, date: Date, buildingNumbers: number[]): Promise<ScheduleTable> {
+        return client.readSchedule(date, buildingNumbers).then(schedule => {
                 return new ScheduleTable(schedule);
             }
         )

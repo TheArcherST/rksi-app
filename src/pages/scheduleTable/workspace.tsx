@@ -242,13 +242,14 @@ export interface WorkspaceProps {
     setIsSaveInProgress: (value: boolean) => any;
     isSaveButtonPressed: boolean;
     setIsSaveDisabled: (value: boolean) => any;
+    buildingNumbers: number[];
 }
 
 
 
 function Workspace(
     {
-        currentDate, isSaveButtonPressed, setIsSaveInProgress, setIsSaveDisabled
+        currentDate, isSaveButtonPressed, setIsSaveInProgress, setIsSaveDisabled, buildingNumbers
     }: WorkspaceProps
 ) {
     const [table, setTable] = useState<ScheduleTable | null>(null);
@@ -257,13 +258,13 @@ function Workspace(
 
     function reloadTable() {
         const gateway = new APIAdapter();
-        ScheduleTable.pull(gateway, currentDate).then(table => {
+        ScheduleTable.pull(gateway, currentDate, buildingNumbers).then(table => {
             setTable(table);
             setLessons(table.schedule.lessons);
         })
     }
 
-    useEffect(reloadTable, [currentDate]);
+    useEffect(reloadTable, [currentDate, buildingNumbers]);
 
     useEffect(() => {
         const gateway = new APIAdapter();
