@@ -53,7 +53,6 @@ class APIAdapter {
             for (let i of buildingNumbers) {
                 params.append('building_numbers', String(i));
             }
-            console.log(params);
         }
         return fetch(
             APIAdapter.baseUrl + '/v1/schedule/read?' + new URLSearchParams(params),
@@ -62,7 +61,6 @@ class APIAdapter {
     }
 
     resolveMention(payload: ResolveMention) : Promise<ResolveMentionResponse> {
-        console.log(payload);
         return fetch(
             APIAdapter.baseUrl + '/v1/mentions/resolve',
             { method: 'POST', headers: APIAdapter.getHeaders(), body: JSON.stringify(payload) }

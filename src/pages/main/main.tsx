@@ -44,7 +44,6 @@ export function LoginForm() {
                 username: data.username,
                 password: data.password,
             }).then(data => {
-                console.log('2')
                 formik.resetForm();
                 navigate('/schedule');
             }).catch(err => {

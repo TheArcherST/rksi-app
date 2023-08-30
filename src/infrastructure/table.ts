@@ -457,6 +457,7 @@ export default class ScheduleTable {
     }
 
     addUpdate(update: UpdateSchedule) {
+        this.updates.length = this.headIndex + 1;
         this.updates.push(update);
     }
 

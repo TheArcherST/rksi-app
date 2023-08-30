@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {KeyboardEvent, useEffect, useRef, useState} from "react";
 
 import {DataTable} from "primereact/datatable";
 import {Column, ColumnBodyOptions} from "primereact/column";
@@ -30,6 +30,7 @@ import {Toast} from "primereact/toast";
 import {Button} from "primereact/button";
 
 import './workspace.css';
+import {useHotkeys} from "react-hotkeys-hook";
 
 
 function ScheduleTableView(
@@ -263,6 +264,24 @@ function Workspace(
             setLessons(table.schedule.lessons);
         })
     }
+
+    useHotkeys('mod+z', (e) => {
+        if (table !== null) {
+            table.undo();
+            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
+            setIsSaveDisabled(!isUpdatesPending);
+            setLessons(Object.assign([], table.schedule.lessons));
+        }
+    })
+    useHotkeys('mod+shift+z', (e) => {
+        if (table !== null) {
+            table.redo();
+            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
+            setIsSaveDisabled(!isUpdatesPending);
+            setLessons(Object.assign([], table.schedule.lessons));
+        }
+    })
+
 
     useEffect(reloadTable, [currentDate, buildingNumbers]);
 
