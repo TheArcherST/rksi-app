@@ -3,7 +3,7 @@ import {EditScheduleDTO, EditScheduleResponseDTO} from "../interfaces/api/editSc
 import {ScheduleDTO} from "../infrastructure/table";
 import SaneDate from "../infrastructure/saneDate";
 import {TokenDTO, TokenResponseDTO} from "../interfaces/api/token";
-import storage from "../storage";
+import storage from "../infrastructure/storage";
 
 export class APIError extends Error {
     status: number;

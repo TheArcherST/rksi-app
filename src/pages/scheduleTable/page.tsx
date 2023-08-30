@@ -2,7 +2,7 @@ import Header from "./header";
 import {useEffect, useState} from "react";
 import Workspace from "./workspace";
 import Footer from "../../components/footer/footer";
-import storage from "../../storage";
+import storage from "../../infrastructure/storage";
 
 
 function ScheduleTablePage() {
