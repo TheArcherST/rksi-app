@@ -4,7 +4,7 @@ import './header.css';
 
 function AppLogo() {
     return (
-        <a className="logo" href="src/components#">РКСИ</a>
+        <a className="logo" href="/login">РКСИ</a>
     );
 }
 

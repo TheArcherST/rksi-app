@@ -1,9 +1,11 @@
 import {ResolveMention, ResolveMentionResponse} from "../interfaces/api/resolveMention";
 import {EditScheduleDTO, EditScheduleResponseDTO} from "../interfaces/api/editSchedule";
-import {ScheduleDTO} from "../infrastructure/table";
 import SaneDate from "../infrastructure/saneDate";
 import {TokenDTO, TokenResponseDTO} from "../interfaces/api/token";
 import storage from "../infrastructure/storage";
+import {GetAuditoriumsDTO, GetAuditoriumsResponseDTO} from "../interfaces/api/getAuditoriums";
+import ScheduleDTO from "../interfaces/schedule";
+import ScheduleSectionDTO from "../interfaces/scheduleSection";
 
 export class APIError extends Error {
     status: number;
@@ -41,13 +43,36 @@ class APIAdapter {
     constructor() {
     }
 
-    readSchedule(date?: Date, buildingNumbers?: number[]): Promise<ScheduleDTO> {
+    getAuditoriums(buildingNumbers?: number[]): Promise<GetAuditoriumsResponseDTO> {
+        let params = new URLSearchParams();
+        if (buildingNumbers !== undefined) {
+            for (let i of buildingNumbers) {
+                params.append('building_numbers', String(i));
+            }
+        }
+        return fetch(
+            APIAdapter.baseUrl + '/v1/auditoriums/get?' + new URLSearchParams(params),
+            { method: 'GET', headers: APIAdapter.getHeaders() }
+        ).then(r => r.json());
+    }
+
+    readSchedule(
+        date?: Date,
+        buildingNumbers?: number[],
+        scheduleSection?: ScheduleSectionDTO | null
+        ): Promise<ScheduleDTO> {
         let params = new URLSearchParams();
         if (date !== undefined) {
-            const period_start = new SaneDate(date);
-            const period_end = period_start.getTomorrow()
-            params.set('period_start', period_start.toStringAsPeriod());
-            params.set('period_end', period_end.toStringAsPeriod());
+            if (scheduleSection) {
+                params.set('period_start', scheduleSection.starts_at);
+                params.set('period_end', scheduleSection.ends_at);
+            } else {
+                const period_start = new SaneDate(date);
+                const period_end = period_start.getTomorrow();
+                params.set('period_start', period_start.toStringAsPeriod());
+                params.set('period_end', period_end.toStringAsPeriod());
+            }
+
         }
         if (buildingNumbers !== undefined) {
             for (let i of buildingNumbers) {

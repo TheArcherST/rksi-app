@@ -4,7 +4,7 @@
     align-items: center;
     min-height: 70vh;
     font-size: 13px;
-    margin: 3vw 5vh;
+    margin: 3vw 1vh;
 }
 
 .workspace * {
@@ -71,6 +71,12 @@ td {
 .column-discipline {
     max-width: 20em;
 }
+.column-auditorium {
+    max-width: 9em;
+}
+.column-schedule-section {
+    max-width: 11em;
+}
 .workspace .p-autocomplete .p-autocomplete-multiple-container .p-autocomplete-token {
     padding: 0.175rem 0.55rem !important;
     margin-top: 0.1rem;
@@ -83,4 +89,26 @@ td {
 .table-empty-message {
     margin: 10vw 1em;
     text-align: center;
+}
+
+.workspace-container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+}
+
+.workspace-container > * {
+    margin: 0 4vw;
+}
+.workspace .toolbox {
+    position: sticky;
+    top: 5em;
+    max-height: 25em;
+    display: flex;
+    flex-direction: column;
+}
+
+.workspace .toolbox > * {
+    margin: 1em;
+    min-width: 200px;
 }

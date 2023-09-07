@@ -28,7 +28,7 @@ export default function CellMultiselect<T extends Entity>(props: CellMultiselect
             field={"display_text"}
             multiple
             forceSelection
-            value={props.entitiesArray}
+            value={(props.entitiesArray.length !== 0) ? props.entitiesArray : null}
             completeMethod={
                 (e) => {
                     props.resolveEntitiesMention(e.query)

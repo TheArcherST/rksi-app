@@ -5,5 +5,6 @@ export default interface Entity extends Object {
 
 
 export enum EntityMagicRuntimeState {
-    CREATED
+    CREATED = 0,  // entity that was just create within UI
+    TEMPLATE = -1,  // template for entity to be created
 }

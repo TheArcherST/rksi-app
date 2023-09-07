@@ -1,8 +1,9 @@
-import Header from "./header";
 import {useEffect, useState} from "react";
 import Workspace from "./workspace";
 import Footer from "../../components/footer/footer";
 import storage from "../../infrastructure/storage";
+import BaseHeader from "../../components/header/baseHeader";
+import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 
 
 function ScheduleTablePage() {
@@ -11,6 +12,8 @@ function ScheduleTablePage() {
     let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
     let [isSaveDisabled, setIsSaveDisabled] = useState(true);
     let [buildingNumbers, setBuildingNumbers] = useState<number[]>(storage.getBuildingNumbers() || []);
+    let [scheduleSection, setScheduleSection] = useState<ScheduleSectionDTO | null>(null);
+    let [scheduleSections, setScheduleSections] = useState<ScheduleSectionDTO[]>([]);
 
     useEffect(() => {
         storage.setBuildingNumbers(buildingNumbers)
@@ -18,16 +21,22 @@ function ScheduleTablePage() {
 
     return (
         <>
-            <Header
-                isSaveDisabled={isSaveDisabled}
-                isSaveInProgress={isSaveDisabled}
-                setIsSaveButtonPressed={setIsSaveButtonPressed}
-                currentDate={currentDate}
-                setDate={setCurrentDate}
-                buildingNumbers={buildingNumbers}
-                setBuildingNumbers={setBuildingNumbers}
-            />
+            <BaseHeader />
             <Workspace
+                toolboxProps={{
+                    isSaveDisabled: isSaveDisabled,
+                    isSaveInProgress: isSaveInProgress,
+                    setIsSaveButtonPressed: setIsSaveButtonPressed,
+                    currentDate: currentDate,
+                    setDate: setCurrentDate,
+                    buildingNumbers: buildingNumbers,
+                    setBuildingNumbers: setBuildingNumbers,
+                    scheduleSection: scheduleSection,
+                    setScheduleSection: setScheduleSection,
+                    scheduleSections: scheduleSections,
+                    setScheduleSections: setScheduleSections,
+                }}
+                setScheduleSections={setScheduleSections}
                 currentDate={currentDate}
                 isSaveInProgress={isSaveInProgress}
                 setIsSaveInProgress={setIsSaveInProgress}

@@ -1,15 +1,17 @@
 import {AutoComplete} from "primereact/autocomplete";
-import {useState} from "react";
+import {CSSProperties, useState} from "react";
 
 import Entity from "../../interfaces/entity";
 import {en} from "chrono-node";
 
 
 interface CellSelectProps<T> {
-    entity: T;
+    entity: T | null;
     setEntity: ((entity: T) => any);
     resolveEntitiesMention: (mention: string) => (Promise<T[]>);
+    style?: CSSProperties | undefined;
 }
+
 
 export default function CellSelect<T extends Entity>(props: CellSelectProps<T>) {
     const [suggestions, setSuggestions] = useState<T[]>([]);
@@ -18,7 +20,7 @@ export default function CellSelect<T extends Entity>(props: CellSelectProps<T>) 
         <AutoComplete
             field={"display_text"}
             forceSelection
-            value={tempValue !== null ? tempValue : props.entity}
+            value={tempValue !== null ? tempValue : (props.entity || "")}
             completeMethod={
                 (e) => {
                     props.resolveEntitiesMention(e.query)
@@ -27,6 +29,7 @@ export default function CellSelect<T extends Entity>(props: CellSelectProps<T>) 
                         })
                 }
             }
+            style={props.style}
             suggestions={suggestions}
             onAbort={() => {
                 setTempValue(null);

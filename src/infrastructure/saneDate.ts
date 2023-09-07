@@ -1,5 +1,5 @@
 function dateNumberToString(n: number) {
-    return ((n < 9) ? '0' : '') + n
+    return ((n <= 9) ? '0' : '') + n
 }
 
 
@@ -18,8 +18,13 @@ export default class SaneDate {
         )
     }
 
-    toStringAsPeriod() {
-        return this.toString() + 'T00:00:00'
+    toStringAsPeriod(h: number = 0, m: number = 0, s: number = 0) {
+        const [h_s, m_s, s_s] = [
+            dateNumberToString(h),
+            dateNumberToString(m),
+            dateNumberToString(s)
+        ];
+        return this.toString() + `T${h_s}:${m_s}:${s_s}`
     }
 
     getTomorrow(): SaneDate {
