@@ -12,6 +12,6 @@ services:
     restart: unless-stopped
     environment:
       - VIRTUAL_HOST=${APPLICATION_HOST}
-      - REDIRECT_TARGET=${APPLICATION_HOST}:${APPLICATION_PORT}
+      - REDIRECT_TARGET=${APPLICATION_SCHEMA}://${APPLICATION_HOST}:${APPLICATION_PORT}
     ports:
       - 80:80
