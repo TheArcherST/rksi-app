@@ -6,3 +6,9 @@ services:
       - '443:443'
     volumes:
       - './config:/config'
+  redirect:
+    image: morbz/docker-web-redirect
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${APPLICATION_HOST}
+      - REDIRECT_TARGET=https://${APPLICATION_HOST}:${APPLICATION_PORT}
