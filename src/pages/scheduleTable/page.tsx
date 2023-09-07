@@ -6,12 +6,17 @@ import BaseHeader from "../../components/header/baseHeader";
 import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 
 
+const DEFAULT_BUILDING_NUMBERS = [1];
+
+
 function ScheduleTablePage() {
     let [currentDate, setCurrentDate] = useState<Date>(new Date());
     let [isSaveInProgress, setIsSaveInProgress] = useState(false);
     let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
     let [isSaveDisabled, setIsSaveDisabled] = useState(true);
-    let [buildingNumbers, setBuildingNumbers] = useState<number[]>(storage.getBuildingNumbers() || []);
+    let [buildingNumbers, setBuildingNumbers] = useState<number[]>(
+        storage.getBuildingNumbers() || DEFAULT_BUILDING_NUMBERS
+    );
     let [scheduleSection, setScheduleSection] = useState<ScheduleSectionDTO | null>(null);
     let [scheduleSections, setScheduleSections] = useState<ScheduleSectionDTO[]>([]);
 
