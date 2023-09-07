@@ -18,6 +18,7 @@ export interface WorkspaceProps {
     isSaveInProgress: boolean;
     setIsSaveInProgress: (value: boolean) => any;
     isSaveButtonPressed: boolean;
+    isSaveDisabled: boolean;
     setIsSaveDisabled: (value: boolean) => any;
     buildingNumbers: number[];
     setScheduleSections: (value: ScheduleSectionDTO[]) => any;
@@ -72,35 +73,9 @@ function Workspace(props: WorkspaceProps) {
         })
     }
 
-    useHotkeys('mod+z', () => {
-        if (table !== null) {
-            table.undo();
-            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
-            props.setIsSaveDisabled(!isUpdatesPending);
-            setLessons(Object.assign([], table.schedule.wrappedLessons));
-        }
-    })
-    useHotkeys('mod+shift+z', () => {
-        if (table !== null) {
-            table.redo();
-            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
-            props.setIsSaveDisabled(!isUpdatesPending);
-            setLessons(Object.assign([], table.schedule.wrappedLessons));
-        }
-    })
-
-
-    useEffect(reloadTable, [
-        props.currentDate,
-        props.buildingNumbers,
-    ]);
-    useEffect(() => reloadTable(true), [
-        props.toolboxProps.scheduleSection,
-    ])
-
-    useEffect(() => {
+    function onSave() {
         const gateway = new APIAdapter();
-        if (table !== null && props.isSaveButtonPressed) {
+        if (table !== null) {
             props.setIsSaveInProgress(true);
             props.setIsSaveDisabled(true);
             table.push(gateway).then(() => {
@@ -124,6 +99,39 @@ function Workspace(props: WorkspaceProps) {
                 props.setIsSaveInProgress(false);
             });
         }
+    }
+
+    useHotkeys('mod+z', () => {
+        if (table !== null) {
+            table.undo();
+            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
+            props.setIsSaveDisabled(!isUpdatesPending);
+            setLessons(Object.assign([], table.schedule.wrappedLessons));
+        }
+    })
+    useHotkeys('mod+shift+z', () => {
+        if (table !== null) {
+            table.redo();
+            const isUpdatesPending = Boolean(table.getUpdateSchemas().length);
+            props.setIsSaveDisabled(!isUpdatesPending);
+            setLessons(Object.assign([], table.schedule.wrappedLessons));
+        }
+    })
+    useHotkeys('mod+s', (e) => {
+        e.preventDefault();
+        if (!props.isSaveDisabled) onSave();
+    })
+
+    useEffect(reloadTable, [
+        props.currentDate,
+        props.buildingNumbers,
+    ]);
+    useEffect(() => reloadTable(true), [
+        props.toolboxProps.scheduleSection,
+    ])
+
+    useEffect(() => {
+        if (props.isSaveButtonPressed) onSave();
     }, [props.isSaveButtonPressed])
 
     const handleProcessUpdate = (update: UpdateSchedule) => {

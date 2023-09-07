@@ -13,7 +13,7 @@ function ScheduleTablePage() {
     let [currentDate, setCurrentDate] = useState<Date>(new Date());
     let [isSaveInProgress, setIsSaveInProgress] = useState(false);
     let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
-    let [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    let [isSaveDisabled, setIsSaveDisabled] = useState<boolean>(true);
     let [buildingNumbers, setBuildingNumbers] = useState<number[]>(
         storage.getBuildingNumbers() || DEFAULT_BUILDING_NUMBERS
     );
@@ -46,6 +46,7 @@ function ScheduleTablePage() {
                 isSaveInProgress={isSaveInProgress}
                 setIsSaveInProgress={setIsSaveInProgress}
                 isSaveButtonPressed={isSaveButtonPressed}
+                isSaveDisabled={isSaveDisabled}
                 setIsSaveDisabled={setIsSaveDisabled}
                 buildingNumbers={buildingNumbers}
             />
