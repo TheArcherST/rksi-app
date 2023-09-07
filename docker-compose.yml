@@ -9,7 +9,9 @@ services:
     restart: unless-stopped
   redirect:
     image: morbz/docker-web-redirect
+    restart: unless-stopped
     environment:
       - VIRTUAL_HOST=${APPLICATION_HOST}
-      - REDIRECT_TARGET=https://${APPLICATION_HOST}:${APPLICATION_PORT}
-    restart: unless-stopped
+      - REDIRECT_TARGET=${APPLICATION_HOST}:${APPLICATION_PORT}
+    ports:
+      - 80:80
