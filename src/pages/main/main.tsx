@@ -256,7 +256,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
                     />
                     {getFormErrorMessage('password')}
                     <Button
-                        label="Войти"
+                        label="Подтвердить"
                         type="submit"
                         style={{marginTop: '1em'}}
                     />
