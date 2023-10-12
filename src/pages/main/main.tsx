@@ -164,7 +164,12 @@ export function RegistrationForm() {
 }
 
 
-export function LoginForm() {
+interface LoginFormProps {
+    isTelegramRedirect: boolean;
+}
+
+
+export function LoginForm({isTelegramRedirect}: LoginFormProps) {
     const toast = useRef<any>(null);
     const navigate = useNavigate();
     const showIncorrect = () => {
@@ -195,7 +200,11 @@ export function LoginForm() {
                 password: data.password,
             }).then(data => {
                 formik.resetForm();
-                navigate('/schedule');
+                if (!isTelegramRedirect) {
+                    navigate(`/schedule?origin=${isTelegramRedirect ? 'telegram' : 'plain'}`);
+                } else {
+                    document.location = `https://t.me/rksi_app_bot?start=${data.access_token}`
+                }
             }).catch(err => {
                 if (err instanceof InvalidUsernameOrPassword) {
                     showIncorrect();
@@ -265,6 +274,7 @@ export enum MainPageDestiny {
 
 export interface MainProps {
     destiny: MainPageDestiny;
+    isTelegramRedirect: boolean;
 }
 
 
@@ -284,7 +294,7 @@ export default function Main(props: MainProps) {
 
     return (
         <main className={className}>
-            {(props.destiny === MainPageDestiny.LOGIN) && <LoginForm />}
+            {(props.destiny === MainPageDestiny.LOGIN) && <LoginForm isTelegramRedirect={props.isTelegramRedirect}/>}
             {(props.destiny === MainPageDestiny.REGISTER) && <RegistrationForm />}
         </main>
     )
