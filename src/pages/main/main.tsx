@@ -153,7 +153,7 @@ export function RegistrationForm() {
                     />
                     {getFormErrorMessage('password')}
                     <Button
-                        label="Войти"
+                        label="Подтвердить"
                         type="submit"
                         style={{marginTop: '1em'}}
                     />
