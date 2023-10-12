@@ -2,14 +2,19 @@ import BaseHeader from "../../components/header/baseHeader";
 import Footer from "../../components/footer/footer";
 import {Button} from "primereact/button";
 
-import Main from './main';
+import Main, {MainPageDestiny,} from './main';
 
 
-function MainPage() {
+interface MainPageProps {
+    destiny: MainPageDestiny;
+}
+
+
+function MainPage(props: MainPageProps) {
     return (
         <>
             <BaseHeader />
-            <Main />
+            <Main {...props}/>
             <Footer
                 style={{
                     height: '20vh',

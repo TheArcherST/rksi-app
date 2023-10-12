@@ -6,6 +6,7 @@ import storage from "../infrastructure/storage";
 import {GetAuditoriumsDTO, GetAuditoriumsResponseDTO} from "../interfaces/api/getAuditoriums";
 import ScheduleDTO from "../interfaces/schedule";
 import ScheduleSectionDTO from "../interfaces/scheduleSection";
+import {RegisterDTO, RegisterResponseDTO} from "../interfaces/api/register";
 
 export class APIError extends Error {
     status: number;
@@ -109,6 +110,19 @@ class APIAdapter {
                 return r.json();
             }
         });
+    }
+
+    register(payload: RegisterDTO): Promise<RegisterResponseDTO> {
+        return fetch(
+            APIAdapter.baseUrl + '/v1/register',
+            { method: 'POST', headers: APIAdapter.getHeaders(), body: JSON.stringify(payload) }
+        ).then( r => {
+            if (Math.floor(r.status / 100) !== 2) {
+                throw new APIError(r.status);
+            } else {
+                return r.json();
+            }
+        })
     }
 
     token(payload: TokenDTO): Promise<TokenResponseDTO> {

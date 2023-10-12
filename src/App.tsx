@@ -13,6 +13,7 @@ import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.css';
 
 import './App.css';
+import {MainPageDestiny} from "./pages/main/main";
 
 
 addRuLocale();
@@ -22,11 +23,15 @@ const router = createBrowserRouter(
     [
         {
             path: "/",
-            element: <MainPage />
+            element: <MainPage destiny={MainPageDestiny.LOGIN} />
         },
         {
             path: "/login",
-            element: <MainPage />
+            element: <MainPage destiny={MainPageDestiny.LOGIN} />
+        },
+        {
+            path: "/register",
+            element: <MainPage destiny={MainPageDestiny.REGISTER} />
         },
         {
             path: '/schedule',
