@@ -11,7 +11,7 @@ import 'primeflex/primeflex.css';
 
 import './main.css';
 import APIAdapter, {InvalidUsernameOrPassword} from "../../adapters/api";
-import {redirect, useNavigate,} from "react-router-dom";
+import {redirect, useNavigate, useSearchParams,} from "react-router-dom";
 
 
 
@@ -172,6 +172,8 @@ interface LoginFormProps {
 export function LoginForm({isTelegramRedirect}: LoginFormProps) {
     const toast = useRef<any>(null);
     const navigate = useNavigate();
+    const [searchParams, _] = useSearchParams();
+
     const showIncorrect = () => {
         toast.current.show({ severity: 'error', summary: 'Ошибка входа', detail: 'Неверный логин или пароль' });
     };
@@ -203,12 +205,17 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
                 if (!isTelegramRedirect) {
                     navigate(`/schedule?origin=${isTelegramRedirect ? 'telegram' : 'plain'}`);
                 } else {
-                    gateway.createUTM(
+                    let utm = searchParams.get('utm')
+                    if (utm === null) {
+                        return;
+                    }
+                    gateway.writeUTM(
                         {
+                            utm_id: utm,
                             value: data.access_token,
                         }
                     ).then(data => {
-                        document.location = `https://t.me/rksi_app_bot?start=${data.utm.id}`
+                        document.location = `https://t.me/rksi_app_bot`
                     })
                 }
             }).catch(err => {

@@ -7,7 +7,8 @@ import {GetAuditoriumsDTO, GetAuditoriumsResponseDTO} from "../interfaces/api/ge
 import ScheduleDTO from "../interfaces/schedule";
 import ScheduleSectionDTO from "../interfaces/scheduleSection";
 import {RegisterDTO, RegisterResponseDTO} from "../interfaces/api/register";
-import {CreateUTMDTO} from "../interfaces/api/createUTM";
+import {CreateUTMDTO, CreateUTMResponseDTO} from "../interfaces/api/createUTM";
+import {WriteUTMDTO, WriteUTMResponseDTO} from "../interfaces/api/writeUTM";
 
 export class APIError extends Error {
     status: number;
@@ -150,11 +151,28 @@ class APIAdapter {
         })
     }
 
-    createUTM(payload: CreateUTMDTO) {
+    createUTM(payload: CreateUTMDTO): Promise<CreateUTMResponseDTO> {
         return fetch(
             APIAdapter.baseUrl + '/v1/utm',
             {
                 method: 'POST',
+                headers: APIAdapter.getHeaders(),
+                body: JSON.stringify(payload)
+            }
+        ).then(r => {
+            if (Math.floor(r.status / 100) !== 2) {
+                throw new APIError(r.status);
+            } else {
+                return r.json()
+            }
+        })
+    }
+
+    writeUTM(payload: WriteUTMDTO): Promise<WriteUTMResponseDTO> {
+        return fetch(
+            APIAdapter.baseUrl + '/v1/utm',
+            {
+                method: 'PUT',
                 headers: APIAdapter.getHeaders(),
                 body: JSON.stringify(payload)
             }
