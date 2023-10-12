@@ -203,7 +203,13 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
                 if (!isTelegramRedirect) {
                     navigate(`/schedule?origin=${isTelegramRedirect ? 'telegram' : 'plain'}`);
                 } else {
-                    document.location = `https://t.me/rksi_app_bot?start=${data.access_token}`
+                    gateway.createUTM(
+                        {
+                            value: data.access_token,
+                        }
+                    ).then(data => {
+                        document.location = `https://t.me/rksi_app_bot?start=${data.utm.id}`
+                    })
                 }
             }).catch(err => {
                 if (err instanceof InvalidUsernameOrPassword) {
