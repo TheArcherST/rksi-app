@@ -4,9 +4,9 @@ h1 {
 }
 
 .login-main {
-    height: 65vh;
+    height: clamp(30em, 70vh, 70vh);
 }
 
 .register-main {
-    height: 90vh;
+    height: clamp(50em, 70vh, 70vh);
 }
