@@ -10,7 +10,7 @@ import {InputText} from "primereact/inputtext";
 import 'primeflex/primeflex.css';
 
 import './main.css';
-import APIAdapter, {InvalidUsernameOrPassword} from "../../adapters/api";
+import APIAdapter, {APIError, InvalidUsernameOrPassword} from "../../adapters/api";
 import {redirect, useNavigate, useSearchParams,} from "react-router-dom";
 
 
@@ -18,6 +18,7 @@ import {redirect, useNavigate, useSearchParams,} from "react-router-dom";
 export function RegistrationForm() {
     const toast = useRef<any>(null);
     const navigate = useNavigate();
+    const [searchParams, _] = useSearchParams();
     const showIncorrect = () => {
         toast.current.show({ severity: 'error', summary: 'Ошибка регистрации', detail: 'Проверьте правильность введённых данных' });
     };
@@ -68,9 +69,12 @@ export function RegistrationForm() {
                 patronymic: data.patronymic,
             }).then(data => {
                 formik.resetForm();
-                navigate('/login');
+                navigate({
+                    pathname: '/login',
+                    search: searchParams.toString(),
+                });
             }).catch(err => {
-                if (err instanceof InvalidUsernameOrPassword) {
+                if (err instanceof APIError) {
                     showIncorrect();
                 }
             })
@@ -187,7 +191,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
             let errors: {username?: string, password?: string} = {};
 
             if (!data.username) {
-                errors.username = 'Логин обязателен.';
+                errors.username = 'Почта обязателена.';
             }
             if (!data.password) {
                 errors.password = 'Пароль обязателен.';
@@ -241,7 +245,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
             <h1>Вход в аккаунт</h1>
             <div className="card flex justify-content-center">
                 <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2">
-                    <label htmlFor="username">Логин</label>
+                    <label htmlFor="username">Почта</label>
                     <Toast
                         ref={toast}
                         style={{marginTop: '5em'}}

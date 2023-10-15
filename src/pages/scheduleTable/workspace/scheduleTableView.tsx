@@ -213,7 +213,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 sortFunction={(e) => {
                     return e.data.sort(
                         (a: WrappedLessonDTO, b: WrappedLessonDTO) => {
-                            if (e.order === 1 || e.order == -1) {
+                            if (e.order === 1 || e.order === -1) {
                                 const [a_n, b_n] = [
                                     Number(a.currentTemplate.auditorium!.auditorium),
                                     Number(b.currentTemplate.auditorium!.auditorium)

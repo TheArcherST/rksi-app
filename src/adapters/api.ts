@@ -41,7 +41,7 @@ class APIAdapter {
         return result;
     }
 
-    static baseUrl = "https://tomioka.ru:6078";
+    static baseUrl = process.env.REACT_APP_API_BASE_URL;
 
     constructor() {
     }
@@ -115,6 +115,7 @@ class APIAdapter {
     }
 
     register(payload: RegisterDTO): Promise<RegisterResponseDTO> {
+        console.log(APIAdapter.baseUrl);
         return fetch(
             APIAdapter.baseUrl + '/v1/register',
             { method: 'POST', headers: APIAdapter.getHeaders(), body: JSON.stringify(payload) }
