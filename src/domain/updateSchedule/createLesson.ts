@@ -22,15 +22,14 @@ export default class CreateLesson implements UpdateSchedule {
 
     schema(quiet?: boolean | null): ScheduleUpdateDTO[] {
         if (!this.lesson.isCanCreate) return [];
-        console.log(this.lesson.currentTemplate);
         return [
             {
                 create_lesson: {
-                    schedule_section: this.lesson.currentTemplate.schedule_section!.id,
-                    auditorium: this.lesson.currentTemplate.auditorium!.id,
-                    discipline: this.lesson.currentTemplate.discipline!.id,
-                    teachers: this.lesson.currentTemplate.teachers.map(i => i.id),
-                    groups: this.lesson.currentTemplate.groups.map(i => i.id),
+                    schedule_section: {id: this.lesson.currentTemplate.schedule_section!.id},
+                    auditorium: {id: this.lesson.currentTemplate.auditorium!.id},
+                    discipline: {id: this.lesson.currentTemplate.discipline!.id},
+                    teachers: this.lesson.currentTemplate.teachers.map(i => {return {id: i.id}}),
+                    groups: this.lesson.currentTemplate.groups.map(i => {return {id: i.id}}),
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

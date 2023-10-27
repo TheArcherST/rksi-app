@@ -1,22 +1,21 @@
 import LessonDTO from "../lesson";
+import PersonReference from "../references/person";
+import LessonReference from "../references/lesson";
+import GroupReference from "../references/group";
+import ScheduleSectionReference from "../references/scheduleSection";
+import AuditoriumReference from "../references/auditorium";
+import DisciplineReference from "../references/discipline";
 
-type LessonReferenceAlias = string | number;
-type PersonReferenceAlias = string | number;
-type GroupReferenceAlias = string | number;
-type ScheduleSectionMention = {mention: string, date: string};
-type ScheduleSectionReferenceAlias = number | ScheduleSectionMention;
-type AuditoriumReferenceAlias = string | number;
-type DisciplineReferenceAlias = string | number;
 
 export interface EditLessonDTO {
-    lesson: LessonReferenceAlias;
-    attach_teacher?: PersonReferenceAlias | null;
-    detach_teacher?: PersonReferenceAlias | null;
-    attach_group?: GroupReferenceAlias | null;
-    detach_group?: GroupReferenceAlias | null;
-    replace_schedule_section?: ScheduleSectionReferenceAlias | null;
-    replace_auditorium?: AuditoriumReferenceAlias | null;
-    replace_discipline? : DisciplineReferenceAlias | null;
+    lesson: LessonReference;
+    attach_teacher?: PersonReference | null;
+    detach_teacher?: PersonReference | null;
+    attach_group?: GroupReference | null;
+    detach_group?: GroupReference | null;
+    replace_schedule_section?: ScheduleSectionReference | null;
+    replace_auditorium?: AuditoriumReference | null;
+    replace_discipline? : DisciplineReference | null;
     quiet?: boolean | null;
 }
 
@@ -25,11 +24,11 @@ export interface EditLessonResponseDTO {
 }
 
 export interface CreateLessonDTO {
-    schedule_section: ScheduleSectionReferenceAlias
-    auditorium: AuditoriumReferenceAlias
-    discipline: DisciplineReferenceAlias
-    teachers: PersonReferenceAlias[]
-    groups: GroupReferenceAlias[]
+    schedule_section: ScheduleSectionReference;
+    auditorium: AuditoriumReference;
+    discipline: DisciplineReference;
+    teachers: PersonReference[];
+    groups: GroupReference[];
     quiet?: boolean | null;
 }
 
@@ -42,7 +41,7 @@ export interface CreateLessonResponseDTO {
 }
 
 export interface DeleteLessonDTO {
-    lesson: LessonReferenceAlias;
+    lesson: LessonReference;
     quiet?: boolean | null;
 }
 

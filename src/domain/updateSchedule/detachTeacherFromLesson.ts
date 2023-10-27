@@ -28,8 +28,8 @@ export default class DetachTeacherFromLesson implements UpdateSchedule {
         return [
             {
                 edit_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
-                    detach_teacher: this.teacher.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
+                    detach_teacher: {id: this.teacher.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

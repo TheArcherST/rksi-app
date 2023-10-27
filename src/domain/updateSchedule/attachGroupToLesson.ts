@@ -27,8 +27,8 @@ export class AttachGroupToLesson implements UpdateSchedule {
         return [
             {
                 edit_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
-                    attach_group: this.group.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
+                    attach_group: {id: this.group.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

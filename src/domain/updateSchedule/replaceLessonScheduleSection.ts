@@ -29,8 +29,8 @@ export default class ReplaceLessonScheduleSection implements UpdateSchedule {
         return [
             {
                 edit_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
-                    replace_schedule_section: this.scheduleSection.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
+                    replace_schedule_section: {id: this.scheduleSection.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

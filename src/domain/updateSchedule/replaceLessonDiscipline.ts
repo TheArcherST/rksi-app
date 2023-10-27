@@ -29,8 +29,8 @@ export default class ReplaceLessonDiscipline implements UpdateSchedule {
         return [
             {
                 edit_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
-                    replace_discipline: this.discipline.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
+                    replace_discipline: {id: this.discipline.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

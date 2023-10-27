@@ -42,7 +42,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 entitiesArray={lesson.currentTemplate.groups}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
-                        {group_mention: mention}
+                        {group_mention: {natural_language: mention}}
                     ).then((data) => {
                         return data.groups;
                     }).catch((err) => {
@@ -70,7 +70,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 entitiesArray={lesson.currentTemplate.teachers}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
-                        {person_mention: mention}
+                        {person_mention: {natural_language: mention}}
                     ).then((data) => {
                         return data.persons;
                     }).catch((err) => {
@@ -105,8 +105,10 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                     return gateway.resolveMention(
                         {
                             schedule_section_mention: {
-                                "mention": mention,
-                                "date": new SaneDate(props.currentDate).toString(),
+                                natural_language: mention,
+                                context: {
+                                    date: new SaneDate(props.currentDate).toString(),
+                                }
                             }
                         }
                     ).then((data) => {
@@ -135,7 +137,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 }}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
-                        {auditorium_mention: mention}
+                        {auditorium_mention: {natural_language: mention}}
                     ).then((data) => {
                         return data.auditoriums;
                     }).catch((err) => {
@@ -158,7 +160,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 }}
                 resolveEntitiesMention={(mention) => {
                     return gateway.resolveMention(
-                        {discipline_mention: mention}
+                        {discipline_mention: {natural_language: mention}}
                     ).then((data) => {
                         return data.disciplines;
                     }).catch((err) => {

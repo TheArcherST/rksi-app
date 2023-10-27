@@ -29,8 +29,8 @@ export default class ReplaceLessonAuditorium implements UpdateSchedule {
         return [
             {
                 edit_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
-                    replace_auditorium: this.auditorium.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
+                    replace_auditorium: {id: this.auditorium.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }

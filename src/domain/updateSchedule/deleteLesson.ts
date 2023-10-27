@@ -26,7 +26,7 @@ export default class DeleteLesson implements UpdateSchedule {
         return [
             {
                 delete_lesson: {
-                    lesson: this.lesson.databaseRepresentation!.id,
+                    lesson: {id: this.lesson.databaseRepresentation!.id},
                     quiet: quiet === undefined ? null : quiet,
                 }
             }
