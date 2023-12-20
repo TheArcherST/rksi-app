@@ -8,5 +8,4 @@ services:
       - './config:/config'
     env_file:
       - .env
-    restart: unless-stopped
-    command: serve -s build --ssl-key=/config/tomioka.ru.key --ssl-cert=/config/tomioka.ru.crt -p 443
+    command: npm start
