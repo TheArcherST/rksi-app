@@ -6,6 +6,7 @@ services:
       - '443:443'
     volumes:
       - './config:/config'
+      - './:/app/'
     env_file:
       - .env
     command: npm start
