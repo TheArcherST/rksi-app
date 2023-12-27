@@ -9,7 +9,7 @@ import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 const DEFAULT_BUILDING_NUMBERS = [1];
 
 
-function ScheduleTablePage() {
+function ScheduleEditorPage() {
     let [currentDate, setCurrentDate] = useState<Date>(new Date());
     let [isSaveInProgress, setIsSaveInProgress] = useState(false);
     let [isSaveButtonPressed, setIsSaveButtonPressed] = useState(false);
@@ -56,4 +56,4 @@ function ScheduleTablePage() {
 }
 
 
-export default ScheduleTablePage;
+export default ScheduleEditorPage;

@@ -182,6 +182,10 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
         toast.current.show({ severity: 'error', summary: 'Ошибка входа', detail: 'Неверный логин или пароль' });
     };
 
+    const nextPage = function (access_token: string) {
+        navigate(`/schedule-editor?origin=${isTelegramRedirect ? 'telegram' : 'plain'}`);
+    }
+
     const formik = useFormik<FormikValues>({
         initialValues: {
             value: '',
@@ -207,7 +211,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
             }).then(data => {
                 formik.resetForm();
                 if (!isTelegramRedirect) {
-                    navigate(`/schedule?origin=${isTelegramRedirect ? 'telegram' : 'plain'}`);
+                    nextPage(data.access_token);
                 } else {
                     let utm = searchParams.get('utm')
                     if (utm === null) {

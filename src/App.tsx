@@ -3,7 +3,7 @@ import React from "react";
 import addRuLocale from "./locale";
 import {locale} from "primereact/api";
 
-import ScheduleTablePage from "./pages/scheduleTable/page";
+import ScheduleEditorPage from "./pages/scheduleTable/page";
 import MainPage from "./pages/main/page";
 
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
@@ -14,6 +14,7 @@ import 'primereact/resources/primereact.css';
 
 import './App.css';
 import {MainPageDestiny} from "./pages/main/main";
+import SchedulePage from "./pages/schedule/page";
 
 
 addRuLocale();
@@ -34,8 +35,12 @@ const router = createBrowserRouter(
             element: <MainPage destiny={MainPageDestiny.REGISTER} />
         },
         {
+            path: '/schedule-editor',
+            element: <ScheduleEditorPage />
+        },
+        {
             path: '/schedule',
-            element: <ScheduleTablePage />
+            element: <SchedulePage />
         }
     ]
 )

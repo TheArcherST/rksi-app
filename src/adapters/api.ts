@@ -9,6 +9,7 @@ import ScheduleSectionDTO from "../interfaces/scheduleSection";
 import {RegisterDTO, RegisterResponseDTO} from "../interfaces/api/register";
 import {CreateUTMDTO, CreateUTMResponseDTO} from "../interfaces/api/createUTM";
 import {WriteUTMDTO, WriteUTMResponseDTO} from "../interfaces/api/writeUTM";
+import PersonDTO from "../interfaces/person";
 
 export class APIError extends Error {
     status: number;

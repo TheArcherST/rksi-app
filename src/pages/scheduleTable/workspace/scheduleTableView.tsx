@@ -215,18 +215,21 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                 sortFunction={(e) => {
                     return e.data.sort(
                         (a: WrappedLessonDTO, b: WrappedLessonDTO) => {
-                            if (e.order === 1 || e.order === -1) {
-                                const [a_n, b_n] = [
-                                    Number(a.currentTemplate.auditorium!.auditorium),
-                                    Number(b.currentTemplate.auditorium!.auditorium)
-                                ];
-                                if (a_n === b_n) {
-                                    return 0;
-                                } else if (a_n < b_n) {
-                                    return e.order;
-                                } else {
-                                    return -e.order;
-                                }
+                            const auditorium_1 = a.currentTemplate.auditorium?.auditorium;
+                            const auditorium_2 = b.currentTemplate.auditorium?.auditorium;
+
+                            if (auditorium_1 === undefined || auditorium_2 === undefined) {
+                                return 0;
+                            }
+                            if (e.order !== 0 && e.order !== -1) {
+                                return 0;
+                            }
+                            if (a === b) {
+                                return 0;
+                            } else if (auditorium_1 < auditorium_2) {
+                                return e.order;
+                            } else {
+                                return -e.order;
                             }
                         }
                     );
