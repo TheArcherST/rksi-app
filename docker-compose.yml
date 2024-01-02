@@ -3,11 +3,11 @@ services:
     build: .
     container_name: rksi_app_frontend
     ports:
-      - '443:443'
+      - '${APPLICATION_HOST}:${APPLICATION_PORT}:3000'
     volumes:
       - './config:/config'
       - './.env:/app/.env'
     env_file:
       - .env
     restart: unless-stopped
-    command: serve -s build --ssl-key=/config/tomioka.ru.key --ssl-cert=/config/tomioka.ru.crt -p 443
+    command: serve -s build --ssl-key=/config/tomioka.ru.key --ssl-cert=/config/tomioka.ru.crt -p 3000

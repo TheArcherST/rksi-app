@@ -10,7 +10,6 @@ interface FooterProps {
 function Footer({pin, style}: FooterProps) {
     return (
         <footer className={pin ? "layout-footer" : undefined} style={style}>
-
         </footer>
     )
 }

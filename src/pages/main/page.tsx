@@ -18,10 +18,10 @@ function MainPage(props: MainPageProps) {
     return (
         <>
             <BaseHeader />
-            <Main {...{
-                isTelegramRedirect: isTelegramRedirect,
-                ...props
-            }}/>
+            <Main
+                isTelegramRedirect={isTelegramRedirect}
+                destiny={props.destiny}
+            />
             <Footer
                 style={{
                     height: '20vh',
