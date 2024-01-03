@@ -110,9 +110,9 @@ export default class ScheduleTable {
         buildingNumbers: number[],
         scheduleSection: ScheduleSectionDTO | null
     ): Promise<ScheduleTable> {
-        return client.readSchedule(date, buildingNumbers, scheduleSection).then(
+        return client.readSchedule({date, building_numbers: buildingNumbers, schedule_section: scheduleSection}).then(
             schedule => {
-                return client.getAuditoriums(buildingNumbers).then(
+                return client.getAuditoriums({building_numbers: buildingNumbers}).then(
                     auditoriums => {
                         return new ScheduleTable(
                             {
