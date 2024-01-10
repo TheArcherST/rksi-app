@@ -12,6 +12,7 @@ import 'primeflex/primeflex.css';
 import './main.css';
 import APIAdapter, {APIError, InvalidUsernameOrPassword} from "../../adapters/api";
 import {redirect, useNavigate, useSearchParams,} from "react-router-dom";
+import storage from "../../infrastructure/storage";
 
 
 
@@ -209,6 +210,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
                 username: data.username,
                 password: data.password,
             }).then(data => {
+                storage.setAccessToken(data.access_token);
                 formik.resetForm();
                 if (!isTelegramRedirect) {
                     nextPage(data.access_token);

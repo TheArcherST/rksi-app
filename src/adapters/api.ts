@@ -94,27 +94,45 @@ class APIAdapter {
         });
     }
 
-    async readSchedule(payload: ReadScheduleDTO): Promise<ReadScheduleResponseDTO> {
-        let params = new URLSearchParams();
-        if (payload.date !== undefined) {
-            if (payload.schedule_section) {
-                params.set('period_start', payload.schedule_section.starts_at);
-                params.set('period_end', payload.schedule_section.ends_at);
-            } else {
-                const period_start = new SaneDate(payload.date);
-                const period_end = period_start.getTomorrow();
-                params.set('period_start', period_start.toStringAsPeriod());
-                params.set('period_end', period_end.toStringAsPeriod());
-            }
-
+    async readSchedule(data: ReadScheduleDTO): Promise<ReadScheduleResponseDTO> {
+        let payload = {};
+        if (data.schedule_section) {
+            payload = {
+                period_start: data.schedule_section.starts_at,
+                period_end: data.schedule_section.ends_at,
+                ...payload
+            };
+        } else if (data.period_start instanceof Date && data.period_end instanceof Date) {
+            payload = {
+                period_start: new SaneDate(data.period_start).toStringAsPeriod(),
+                period_end: new SaneDate(data.period_end).toStringAsPeriod(),
+                ...payload
+            };
+        } else if (data.date instanceof Date) {
+            const period_start = new SaneDate(data.date);
+            const period_end = period_start.getTomorrow();
+            payload = {
+                period_start: period_start.toStringAsPeriod(),
+                period_end: period_end.toStringAsPeriod(),
+                ...payload
+            };
         }
-        for (let i of payload.building_numbers || []) {
-            params.append('building_numbers', String(i));
+        if (data.building_numbers?.length) {
+            payload = {
+                building_numbers: data.building_numbers,
+                ...payload
+            };
+        }
+        if (data.group) {
+            payload = {
+                group: data.group,
+                ...payload
+            }
         }
         return await this.processRequest({
-            method: 'GET',
+            method: 'POST',
             path: '/v1/schedule/read',
-            params: params,
+            json: payload,
         });
     }
 

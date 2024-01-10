@@ -71,6 +71,9 @@ export class WrappedLessonDTO {
 
 export interface WrappedScheduleDTO {
     wrappedLessons: WrappedLessonDTO[];
+    auditoriums: AuditoriumDTO[];
+    scheduleSections: ScheduleSectionDTO[];
+    date: Date;
 }
 
 

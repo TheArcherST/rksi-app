@@ -31,7 +31,7 @@ function Workspace(props: WorkspaceProps) {
     const [lessons, setLessons] = useState<WrappedLessonDTO[]>([]);
     const schedulePullToast = useRef<any>(null);
 
-    function reloadTable(shareSections: boolean = false) {
+    function reloadTable(previous: ScheduleTable | null = null) {
         const gateway = new APIAdapter();
         ScheduleTable.pull(
             gateway,
@@ -41,35 +41,7 @@ function Workspace(props: WorkspaceProps) {
         ).then(table => {
             setTable(table);
             setLessons(table.schedule.wrappedLessons);
-            const sections = table.schedule.wrappedLessons.map(i => {
-                if (i.currentTemplate.schedule_section) {
-                    return i.currentTemplate.schedule_section
-                } else if (i.databaseRepresentation) {
-                    return i.databaseRepresentation.schedule_section
-                } else {
-                    return null;
-                }
-            })
-            let cleanSections: ScheduleSectionDTO[];
-            if (shareSections) {
-                cleanSections = [...props.toolboxProps.scheduleSections];
-            } else {
-                cleanSections = [];
-            }
-            for (let i of sections) {
-                let isContinue = false;
-                if (i !== null) {
-                    for (let j of cleanSections) {
-                        if (j.id === i.id) {
-                            isContinue = true;
-                            break;
-                        }
-                    }
-                    if (isContinue) continue;
-                    cleanSections.push(i)
-                }
-            }
-            props.setScheduleSections(cleanSections);
+            props.setScheduleSections(table.schedule.scheduleSections);
         })
     }
 
@@ -126,7 +98,7 @@ function Workspace(props: WorkspaceProps) {
         props.currentDate,
         props.buildingNumbers,
     ]);
-    useEffect(() => reloadTable(true), [
+    useEffect(reloadTable, [
         props.toolboxProps.scheduleSection,
     ])
 

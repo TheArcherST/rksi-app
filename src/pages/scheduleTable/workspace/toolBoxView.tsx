@@ -113,8 +113,7 @@ function ScheduleSectionSelector(
     props: ScheduleSectionSelectorProps,
 ) {
     const items = props.scheduleSections.map(i =>
-        {return {name: i.display_text, value: i}}
-    )
+        new Object({name: i.display_text, value: i}));
     if (props.scheduleSection === null && props.scheduleSections.length > 0) {
         props.setScheduleSection(props.scheduleSections[0]);
     }

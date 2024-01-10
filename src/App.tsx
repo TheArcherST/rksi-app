@@ -14,7 +14,7 @@ import 'primereact/resources/primereact.css';
 
 import './App.css';
 import {MainPageDestiny} from "./pages/main/main";
-import SchedulePage from "./pages/schedule/page";
+import SchedulePage from "./pages/schedule/SchedulePage";
 
 
 addRuLocale();

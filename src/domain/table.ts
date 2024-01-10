@@ -6,6 +6,7 @@ import UpdateSchedule, {createLessonTemplateDTO, WrappedLessonDTO, WrappedSchedu
 import DeleteLesson from "./updateSchedule/deleteLesson";
 import CreateLesson from "./updateSchedule/createLesson";
 import ScheduleSectionDTO from "../interfaces/scheduleSection";
+import SaneDate from "../infrastructure/saneDate";
 
 
 
@@ -104,36 +105,49 @@ export default class ScheduleTable {
         }
         return updates;
     }
-    static pull(
+    static async pull(
         client: APIAdapter,
         date: Date,
         buildingNumbers: number[],
         scheduleSection: ScheduleSectionDTO | null
     ): Promise<ScheduleTable> {
-        return client.readSchedule({date, building_numbers: buildingNumbers, schedule_section: scheduleSection}).then(
-            schedule => {
-                return client.getAuditoriums({building_numbers: buildingNumbers}).then(
-                    auditoriums => {
-                        return new ScheduleTable(
-                            {
-                                wrappedLessons: schedule.lessons.map(
-                                    i => new WrappedLessonDTO(
-                                        i,
-                                        [],
-                                        Object.assign(
-                                            createLessonTemplateDTO(),
-                                            {
-                                                auditorium: i.auditorium
-                                            }
-                                            ),
-                                        i
-                                    )
-                                )
-                            },
-                            this.generateInitialUpdates(schedule.lessons, auditoriums.auditoriums)
-                        );
-                    })
-            }
+        const serializedDate = new SaneDate(date).toString();
+
+        let [auditoriums, scheduleSections, schedule] = await Promise.all([
+            client.getAuditoriums({
+                building_numbers: buildingNumbers
+            }),
+            client.resolveMention({
+                schedule_section_mention: {context: {date: serializedDate}}
+            }),
+            client.readSchedule({
+                date: date,
+                building_numbers: buildingNumbers,
+                schedule_section: scheduleSection,
+            })])
+
+        const wrappedLessons = schedule.lessons.map(
+            i => new WrappedLessonDTO(
+                i,
+                [],
+                Object.assign(
+                    createLessonTemplateDTO(),
+                    {
+                        auditorium: i.auditorium
+                    }
+                ),
+                i
+            )
         )
+
+        return new ScheduleTable(
+            {
+                wrappedLessons: wrappedLessons,
+                auditoriums: auditoriums.auditoriums,
+                scheduleSections: scheduleSections.schedule_sections,
+                date: date,
+            },
+            this.generateInitialUpdates(schedule.lessons, auditoriums.auditoriums),
+        );
     }
 }

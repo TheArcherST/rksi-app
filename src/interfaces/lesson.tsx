@@ -12,5 +12,4 @@ export default interface LessonDTO extends Entity {
     teachers: PersonDTO[];
     discipline: DisciplineDTO;
     auditorium: AuditoriumDTO;
-
 };
