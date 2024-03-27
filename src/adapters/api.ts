@@ -10,7 +10,12 @@ import {WriteUTMDTO, WriteUTMResponseDTO} from "../interfaces/api/writeUTM";
 import {ReadScheduleDTO, ReadScheduleResponseDTO} from "../interfaces/api/readSchedule";
 
 
-export class APIError extends Error {
+interface APIErrorI extends Error {
+    status: number;
+}
+
+
+export class APIError extends Error implements APIErrorI {
     status: number;
 
     constructor(status: number) {
@@ -21,8 +26,15 @@ export class APIError extends Error {
 
 
 export class APIErrorInvalidRequest extends APIError {
+    constructor(status: undefined | number = undefined) {
+        super(status ?? 400);
+    }
+}
+
+
+export class APIAuthorizationError extends APIErrorInvalidRequest {
     constructor() {
-        super(400);
+        super(401);
     }
 }
 
@@ -55,6 +67,21 @@ class APIAdapter {
     constructor() {
     }
 
+    protected getAPIErrorObj(response: Response): APIErrorI {
+        const status = response.status;
+        const milestoneDigit = Math.floor(response.status / 100);
+
+        if (milestoneDigit == 4) {
+            if (status == 401) {
+                return new APIAuthorizationError();
+            } else {
+                return new APIErrorInvalidRequest(status);
+            }
+        } else {
+            return new APIError(status);
+        }
+    }
+
     protected async processRequest(
         { method, path, body, json, params, contentType="application/json" } : {
             method: 'GET' | 'POST' | 'PUT',
@@ -69,15 +96,18 @@ class APIAdapter {
         if (json !== undefined && json !== null) {
             body = typeof json === 'string' ? json : JSON.stringify(json);
         }
-        let requestInit: object = { method, headers: APIAdapter.getHeaders(contentType)};
+        let requestInit: object = {method, headers: APIAdapter.getHeaders(contentType)};
         if (body !== undefined && body !== null) {
             requestInit = {body, ...requestInit}
         }
         let url = new URL(path, APIAdapter.baseUrl);
-        console.log(requestInit)
         const response = await fetch(url, requestInit,);
         if (Math.floor(response.status / 100) != 2) {
-            throw new APIError(response.status);
+            const err = this.getAPIErrorObj(response);
+            if (err instanceof APIAuthorizationError) {
+                window.location.replace('/');
+            }
+            throw err;
         }
         return await response.json();
     }
