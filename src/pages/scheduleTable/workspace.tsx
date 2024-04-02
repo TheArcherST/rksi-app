@@ -31,17 +31,20 @@ function Workspace(props: WorkspaceProps) {
     const [lessons, setLessons] = useState<WrappedLessonDTO[]>([]);
     const schedulePullToast = useRef<any>(null);
 
+
     function reloadTable(previous: ScheduleTable | null = null) {
+        if (props.toolboxProps.scheduleSection === null) {
+            return;
+        }
         const gateway = new APIAdapter();
         ScheduleTable.pull(
             gateway,
             props.currentDate,
             props.buildingNumbers,
-            props.toolboxProps.scheduleSection
+            props.toolboxProps.scheduleSection,
         ).then(table => {
             setTable(table);
             setLessons(table.schedule.wrappedLessons);
-            props.setScheduleSections(table.schedule.scheduleSections);
         })
     }
 
@@ -97,14 +100,12 @@ function Workspace(props: WorkspaceProps) {
     useEffect(reloadTable, [
         props.currentDate,
         props.buildingNumbers,
-    ]);
-    useEffect(reloadTable, [
         props.toolboxProps.scheduleSection,
-    ])
+    ]);
 
     useEffect(() => {
         if (props.isSaveButtonPressed) onSave();
-    }, [props.isSaveButtonPressed])
+    }, [props.isSaveButtonPressed]);
 
     const handleProcessUpdate = (update: UpdateSchedule) => {
         if (table !== null) {

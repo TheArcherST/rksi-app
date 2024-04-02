@@ -8,6 +8,7 @@ import PersonMention from "../mentions/person";
 import AuditoriumMention from "../mentions/auditorium";
 import DisciplineMention from "../mentions/discipline";
 import ScheduleSectionMention from "../mentions/scheduleSection";
+import StudyDayMention from "../mentions/studyDay";
 
 
 export interface ResolveMention {
@@ -16,6 +17,7 @@ export interface ResolveMention {
     auditorium_mention?: AuditoriumMention;
     discipline_mention?: DisciplineMention;
     schedule_section_mention?: ScheduleSectionMention;
+    study_day_mention?: StudyDayMention;
 }
 
 

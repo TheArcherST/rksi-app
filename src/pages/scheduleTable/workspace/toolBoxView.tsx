@@ -9,6 +9,8 @@ import {SelectButton} from "primereact/selectbutton";
 import './toolBoxView.css';
 import ScheduleSectionDTO from "../../../interfaces/scheduleSection";
 import {Dropdown} from "primereact/dropdown";
+import APIAdapter from "../../../adapters/api";
+import SaneDate from "../../../infrastructure/saneDate";
 
 
 interface DateSelectorProps {
@@ -114,9 +116,6 @@ function ScheduleSectionSelector(
 ) {
     const items = props.scheduleSections.map(i =>
         new Object({name: i.display_text, value: i}));
-    if (props.scheduleSection === null && props.scheduleSections.length > 0) {
-        props.setScheduleSection(props.scheduleSections[0]);
-    }
     return (
         <Dropdown
             value={props.scheduleSection}
@@ -131,9 +130,9 @@ function ScheduleSectionSelector(
 
 export interface ToolBoxProps {
     scheduleSection: ScheduleSectionDTO | null;
-    setScheduleSection: (value: ScheduleSectionDTO | null) => any;
-    setScheduleSections: (value: ScheduleSectionDTO[]) => any;
+    setScheduleSection: (value: ScheduleSectionDTO) => any;
     scheduleSections: ScheduleSectionDTO[];
+    setScheduleSections: (value: ScheduleSectionDTO[]) => any;
     currentDate: Date;
     setDate: (value: Date) => any;
     setIsSaveButtonPressed: (value: boolean) => any;
@@ -151,14 +150,32 @@ function ToolBoxView(
         setScheduleSection, scheduleSection, scheduleSections, setScheduleSections
     }: ToolBoxProps
 ) {
+    const onDateUpdate = (value: Date) => {
+      const gateway = new APIAdapter();
+      gateway.resolveMention({
+        schedule_section_mention: {
+          natural_language: null,
+          context: {
+            date: new SaneDate(value).toString(),
+          }
+        }
+      }).then((response) => {
+        setScheduleSection(response.schedule_sections[0]);
+        setScheduleSections(response.schedule_sections);
+      })
+    };
+
+    useState(() => {
+      onDateUpdate(currentDate);
+    });
+
     return (
         <div className={"toolbox"}>
             <DateSelector
                 currentDate={currentDate}
                 setDate={(value) => {
                     setDate(value);
-                    setScheduleSection(null);
-                    setScheduleSections([]);
+                    onDateUpdate(value);
                 }}/>
             <BuildingNumberSelector
                 buildingNumbers={buildingNumbers}

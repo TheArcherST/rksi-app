@@ -16,8 +16,14 @@ export default class ScheduleTable {
     headIndex: number = -1;
     initialUpdatesCount: number = 0;
 
-    constructor(schedule: WrappedScheduleDTO, initialUpdates: UpdateSchedule[] = []) {
+    constructor(schedule: WrappedScheduleDTO) {
         this.schedule = schedule;
+    }
+
+    applyInitialUpdates(initialUpdates: UpdateSchedule[] = []) {
+        if (this.updates.length) {
+            throw Error("Initial updates can be applied only if update stack is empty");
+        }
         this.updates = initialUpdates;
         for (let i = 0; i < this.updates.length; i++) {
             this.redo();
@@ -68,21 +74,22 @@ export default class ScheduleTable {
 
     push(client: APIAdapter): Promise<EditScheduleResponseDTO> {
         const updatesSchemas = this.getUpdateSchemas();
-        const [updates, headIndex] = [[...this.updates], this.headIndex];
-        this.updates = [];
-        this.headIndex = -1;
+
         return client.editSchedule(
             {updates: updatesSchemas}
         ).catch((err) => {
-            this.updates = updates;
-            this.headIndex = headIndex;
             throw err;
-        })
+        }).then((response) => {
+            this.updates = [];
+            this.headIndex = -1;
+            return response;
+        });
     }
 
     static generateInitialUpdates(
         lessons: LessonDTO[],
         auditoriums: AuditoriumDTO[],
+        scheduleSection: ScheduleSectionDTO | null,
     ): UpdateSchedule[] {
         const updates = [];
         for (const auditorium of auditoriums) {
@@ -92,6 +99,7 @@ export default class ScheduleTable {
                 });
                 const current = Object.assign(createLessonTemplateDTO(), {
                     auditorium: auditorium,
+                    scheduleSection: scheduleSection,
                 });
                 updates.push(new CreateLesson(
                     new WrappedLessonDTO(
@@ -105,6 +113,21 @@ export default class ScheduleTable {
         }
         return updates;
     }
+
+    static wrapLesson(lesson: LessonDTO): WrappedLessonDTO {
+        return new WrappedLessonDTO(
+          lesson,
+          [],
+          Object.assign(
+            createLessonTemplateDTO(),
+            {
+                auditorium: lesson.auditorium
+            }
+          ),
+          lesson
+        );
+    }
+
     static async pull(
         client: APIAdapter,
         date: Date,
@@ -112,7 +135,6 @@ export default class ScheduleTable {
         scheduleSection: ScheduleSectionDTO | null
     ): Promise<ScheduleTable> {
         const serializedDate = new SaneDate(date).toString();
-
         let [auditoriums, scheduleSections, schedule] = await Promise.all([
             client.getAuditoriums({
                 building_numbers: buildingNumbers
@@ -124,30 +146,21 @@ export default class ScheduleTable {
                 date: date,
                 building_numbers: buildingNumbers,
                 schedule_section: scheduleSection,
-            })])
+            })]);
 
-        const wrappedLessons = schedule.lessons.map(
-            i => new WrappedLessonDTO(
-                i,
-                [],
-                Object.assign(
-                    createLessonTemplateDTO(),
-                    {
-                        auditorium: i.auditorium
-                    }
-                ),
-                i
-            )
-        )
+        const wrappedLessons = schedule.lessons.map(this.wrapLesson);
 
-        return new ScheduleTable(
+        let table = new ScheduleTable(
             {
                 wrappedLessons: wrappedLessons,
                 auditoriums: auditoriums.auditoriums,
                 scheduleSections: scheduleSections.schedule_sections,
                 date: date,
             },
-            this.generateInitialUpdates(schedule.lessons, auditoriums.auditoriums),
         );
+        table.applyInitialUpdates(
+          this.generateInitialUpdates(schedule.lessons, auditoriums.auditoriums, scheduleSection)
+        );
+        return table;
     }
 }
