@@ -99,7 +99,7 @@ export default class ScheduleTable {
                 });
                 const current = Object.assign(createLessonTemplateDTO(), {
                     auditorium: auditorium,
-                    scheduleSection: scheduleSection,
+                    schedule_section: scheduleSection,
                 });
                 updates.push(new CreateLesson(
                     new WrappedLessonDTO(
@@ -121,7 +121,8 @@ export default class ScheduleTable {
           Object.assign(
             createLessonTemplateDTO(),
             {
-                auditorium: lesson.auditorium
+                auditorium: lesson.auditorium,
+                scheduleSection: lesson.schedule_section,
             }
           ),
           lesson
