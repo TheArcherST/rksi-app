@@ -133,6 +133,7 @@ function Schedule() {
     })
 
     useEffect(() => {
+        const initial = searchParams.toString();
         switch (filterTabIndexRef.current) {
             case ScheduleFilterTabIndex.TEACHER:
                 searchParams.delete("group");
@@ -145,7 +146,8 @@ function Schedule() {
                 searchParams.set("group", groupEntity.id.toString());
                 break;
         }
-        setSearchParams(searchParams);
+        if (initial !== searchParams.toString())
+            setSearchParams(searchParams);
     }, [teacherEntity, groupEntity, filterTabIndex]);
 
     const resolveGroupMention = async (mention: string) => {
