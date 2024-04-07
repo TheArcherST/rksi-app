@@ -135,13 +135,13 @@ function Schedule() {
     useEffect(() => {
         switch (filterTabIndexRef.current) {
             case ScheduleFilterTabIndex.TEACHER:
-                if (!teacherEntity) break;
                 searchParams.delete("group");
+                if (!teacherEntity) break;
                 searchParams.set("teacher", teacherEntity.id.toString());
                 break;
             case ScheduleFilterTabIndex.GROUP:
-                if (!groupEntity) break;
                 searchParams.delete("teacher");
+                if (!groupEntity) break;
                 searchParams.set("group", groupEntity.id.toString());
                 break;
         }
