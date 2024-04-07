@@ -121,6 +121,7 @@ function Schedule() {
     }, []);
 
     useEffect(() => {
+        if (filterTabIndex !== ScheduleFilterTabIndex.GROUP) return;
         setSearchParams({
             ...searchParams,
             group: groupEntity?.id?.toString(),
@@ -128,6 +129,7 @@ function Schedule() {
     }, [groupEntity]);
 
     useEffect(() => {
+        if (filterTabIndex !== ScheduleFilterTabIndex.TEACHER) return;
         setSearchParams({
             ...searchParams,
             teacher: teacherEntity?.id?.toString(),
