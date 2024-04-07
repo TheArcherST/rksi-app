@@ -2,7 +2,7 @@ import './Schedule.css'
 import {DataScroller} from "primereact/datascroller";
 import LessonDTO from "../../interfaces/lesson";
 import APIAdapter, {APIError} from "../../adapters/api";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import ScheduleDTO from "../../interfaces/schedule";
 import { DateTime } from "luxon";
 import {ReadScheduleResponseDTO} from "../../interfaces/api/readSchedule";
@@ -98,6 +98,7 @@ function Schedule() {
     const initialTeacher = storage.getScheduleTeacher();
     const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
     const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
+    const filterTabIndexRef = useRef<number>(0);
 
     useEffect(() => {
         const paramGroup = searchParams.get("group");
@@ -109,6 +110,7 @@ function Schedule() {
               }
             )
             setFilterTabIndex(ScheduleFilterTabIndex.GROUP);
+            filterTabIndexRef.current = ScheduleFilterTabIndex.GROUP;
         }
         if (paramTeacher !== null) {
             gateway.resolveReference({person_reference: {id: Number.parseInt(paramTeacher)}}).then(
@@ -117,34 +119,35 @@ function Schedule() {
               }
             )
             setFilterTabIndex(ScheduleFilterTabIndex.TEACHER);
+            filterTabIndexRef.current = ScheduleFilterTabIndex.TEACHER;
         }
     }, []);
 
     useEffect(() => {
-        if (filterTabIndex !== ScheduleFilterTabIndex.GROUP) return;
-        setSearchParams({
-            ...searchParams,
-            group: groupEntity?.id?.toString(),
-        })
-    }, [groupEntity]);
+        if (!groupEntity) return;
+        storage.setScheduleGroup(groupEntity);
+    })
+    useEffect(() => {
+        if (!teacherEntity) return;
+        storage.setScheduleTeacher(teacherEntity);
+    })
 
     useEffect(() => {
-        if (filterTabIndex !== ScheduleFilterTabIndex.TEACHER) return;
-        setSearchParams({
-            ...searchParams,
-            teacher: teacherEntity?.id?.toString(),
-        })
-    }, [teacherEntity]);
+        switch (filterTabIndexRef.current) {
+            case ScheduleFilterTabIndex.TEACHER:
+                if (!teacherEntity) break;
+                searchParams.delete("group");
+                searchParams.set("teacher", teacherEntity.id.toString());
+                break;
+            case ScheduleFilterTabIndex.GROUP:
+                if (!groupEntity) break;
+                searchParams.delete("teacher");
+                searchParams.set("group", groupEntity.id.toString());
+                break;
+        }
+        setSearchParams(searchParams);
+    }, [filterTabIndex]);
 
-    const onSetGroup = (value: GroupDTO) => {
-        storage.setScheduleGroup(value);
-        setGroupEntity(value);
-    }
-
-    const onSetTeacher = (value: PersonDTO) => {
-        storage.setScheduleTeacher(value);
-        setTeacherEntity(value);
-    }
     const resolveGroupMention = async (mention: string) => {
         const gateway = new APIAdapter();
         try {
@@ -171,11 +174,7 @@ function Schedule() {
 
     const onTabChange = (e: TabViewTabChangeEvent) => {
         setFilterTabIndex(e.index);
-        if (e.index === ScheduleFilterTabIndex.TEACHER) {
-            setSearchParams({...searchParams, teacher: teacherEntity?.id?.toString()})
-        } else if (e.index === ScheduleFilterTabIndex.GROUP) {
-            setSearchParams({...searchParams, group: groupEntity?.id?.toString()})
-        }
+        filterTabIndexRef.current = e.index;
     }
 
     return (
@@ -187,7 +186,7 @@ function Schedule() {
                 <TabPanel header="По группе">
                     <CellSelect<GroupDTO>
                         entity={groupEntity}
-                        setEntity={onSetGroup}
+                        setEntity={setGroupEntity}
                         resolveEntitiesMention={resolveGroupMention}
                         dropdown={true}
                         placeholder={"Группа..."}
@@ -196,7 +195,7 @@ function Schedule() {
                 <TabPanel header="По преподавателю">
                     <CellSelect<PersonDTO>
                         entity={teacherEntity}
-                        setEntity={onSetTeacher}
+                        setEntity={setTeacherEntity}
                         resolveEntitiesMention={resolveTeacherMention}
                         dropdown={true}
                         placeholder={"ФИО..."}
