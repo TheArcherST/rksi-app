@@ -96,6 +96,7 @@ export default class ScheduleTable {
             if (!lessons.filter(i => i.auditorium.id === auditorium.id).length) {
                 const initial = Object.assign(createLessonTemplateDTO(), {
                     auditorium: auditorium,
+                    schedule_section: scheduleSection,
                 });
                 const current = Object.assign(createLessonTemplateDTO(), {
                     auditorium: auditorium,
