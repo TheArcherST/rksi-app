@@ -38,7 +38,7 @@ export default function StudyDayTemplate(schedule: ScheduleDTO) {
     const firstDate = DateTime.fromISO(first.schedule_section.starts_at);
 
     return (
-        <div className="study-day-template">
+        <div className="study-day-template" key={firstDate.toString()}>
             <StudyDayHeader date={firstDate} />
             {lessons.map((lesson) =>
                 <LessonTemplate
