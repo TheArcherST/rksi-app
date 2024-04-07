@@ -2,7 +2,7 @@ import './Schedule.css'
 import {DataScroller} from "primereact/datascroller";
 import LessonDTO from "../../interfaces/lesson";
 import APIAdapter, {APIError} from "../../adapters/api";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import ScheduleDTO from "../../interfaces/schedule";
 import { DateTime } from "luxon";
 import {ReadScheduleResponseDTO} from "../../interfaces/api/readSchedule";
@@ -16,6 +16,7 @@ import PersonReference from "../../interfaces/references/person";
 import PersonDTO from "../../interfaces/person";
 import {TabPanel, TabView, TabViewTabChangeEvent} from "primereact/tabview";
 import {useSearchParams} from "react-router-dom";
+import {useTimeout} from "primereact/hooks";
 
 
 async function fetchSchedule(group: GroupReference | null, teacher: PersonReference | null) : Promise<ReadScheduleResponseDTO> {
@@ -51,7 +52,7 @@ function packStudyDays(lessons: LessonDTO[]): ScheduleDTO[] {
 
 function ScheduleView({group, teacher}: {group: GroupReference | null, teacher: PersonReference | null}) {
     const [schedule, setSchedule] = useState<ScheduleDTO>();
-
+    const [loadedScheduleDidMounted, setLoadedScheduleDidMounted] = useState(false);
     const emptyMessage: string = schedule === undefined ? "Подождите..." : "Занятий нет";
 
     useEffect(() => {
@@ -66,13 +67,32 @@ function ScheduleView({group, teacher}: {group: GroupReference | null, teacher: 
     const lessons = schedule?.lessons || [];
     const packedLessons = packStudyDays(lessons);
 
+    useEffect(() => {
+      // by some reason, browser do not handle simultaneous hash change properly (just after mount)
+      // actually it works even with 1ms timeout, but do no work without
+      setTimeout(() => {
+        if (loadedScheduleDidMounted) {
+          const buffer = String(window.location.hash);
+          window.location.hash = "";
+          window.location.hash = buffer;
+        }
+      }, 10);
+
+    }, [loadedScheduleDidMounted]);
+
+    const onDataScrollerMount = useCallback((node: DataScroller) => {
+      if (lessons.length > 0)
+        setLoadedScheduleDidMounted(true);
+    }, [lessons]);
+
     return (
         <div className="schedule-view">
             <DataScroller
-                value={packedLessons}
-                itemTemplate={StudyDayTemplate}
-                emptyMessage={emptyMessage}
-                rows={packedLessons.length}
+              ref={onDataScrollerMount}
+              value={packedLessons}
+              itemTemplate={StudyDayTemplate}
+              emptyMessage={emptyMessage}
+              rows={packedLessons.length}
             />
         </div>
     );
