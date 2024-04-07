@@ -9,6 +9,8 @@ interface CellSelectProps<T> {
     setEntity: ((entity: T) => any);
     resolveEntitiesMention: (mention: string) => (Promise<T[]>);
     style?: CSSProperties | undefined;
+    dropdown: boolean;
+    placeholder?: string;
 }
 
 
@@ -28,6 +30,8 @@ export default function CellSelect<T extends Entity>(props: CellSelectProps<T>) 
                         })
                 }
             }
+            placeholder={props?.placeholder}
+            dropdown={props.dropdown}
             style={props.style}
             suggestions={suggestions}
             onAbort={() => {

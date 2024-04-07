@@ -1,7 +1,20 @@
 .study-day-header {
     width: 100%;
     margin-bottom: 1em;
+    font-size: 1.4em;
+    color: #1f2023;
 }
+
+.study-day-header:target {
+    background-color: #fffdd3;
+
+}
+
+.study-day-header > * {
+    text-decoration: none;
+    color: #1f2023;
+}
+
 
 .study-day-template {
     margin: 2em 0;

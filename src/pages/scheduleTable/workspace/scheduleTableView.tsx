@@ -125,6 +125,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                         return [];
                     })
                 }}
+                dropdown={false}
             />
         );
     }
@@ -148,6 +149,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                         return [];
                     })
                 }}
+                dropdown={false}
             />
         );
     }
@@ -170,6 +172,7 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                         console.log(err);
                         return [];})
                 }}
+                dropdown={false}
             />
         );
     }

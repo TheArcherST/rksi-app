@@ -2,18 +2,30 @@ import ScheduleDTO from "../../interfaces/schedule";
 import {DateTime} from "luxon";
 
 import "./StudyDayTemplate.css";
-import LessonTemplate from "./LessonTemplate";
+import LessonTemplate, {LessonTemplateProps} from "./LessonTemplate";
 
 
 function StudyDayHeader({date}: {date: DateTime}) {
+    const dateStr = date
+        .setLocale('ru')
+        .toLocaleString();
+    let dateStrVerbose = date
+        .setLocale('ru')
+        .toLocaleString({
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+        });
+    dateStrVerbose = dateStrVerbose[0].toUpperCase() + dateStrVerbose.slice(1);
     return (
-        <div className="study-day-header">
-            {date
-                .setLocale('ru')
-                .toLocaleString()}
+        <div className="study-day-header" id={dateStr}>
+            <a href={`#${dateStr}`}>
+                {dateStrVerbose}
+            </a>
         </div>
     );
 }
+
 
 export default function StudyDayTemplate(schedule: ScheduleDTO) {
     const lessons = schedule.lessons;
@@ -28,7 +40,11 @@ export default function StudyDayTemplate(schedule: ScheduleDTO) {
     return (
         <div className="study-day-template">
             <StudyDayHeader date={firstDate} />
-            {schedule.lessons.map(LessonTemplate)}
+            {lessons.map((lesson) =>
+                <LessonTemplate
+                    entity={lesson}
+                />
+            )}
         </div>
     );
 }

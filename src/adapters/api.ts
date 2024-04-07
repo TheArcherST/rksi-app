@@ -159,6 +159,12 @@ class APIAdapter {
                 ...payload
             }
         }
+        if (data.teacher) {
+            payload = {
+                teacher: data.teacher,
+                ...payload
+            }
+        }
         return await this.processRequest({
             method: 'POST',
             path: '/v1/schedule/read',

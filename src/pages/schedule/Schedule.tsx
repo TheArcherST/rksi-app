@@ -10,9 +10,14 @@ import StudyDayTemplate from "./StudyDayTemplate";
 import GroupDTO from "../../interfaces/group";
 import GroupReference from "../../interfaces/references/group";
 import CellSelect from "../../components/table/cellSelect";
+import storage from "../../infrastructure/storage";
+import {validateYupSchema} from "formik";
+import PersonReference from "../../interfaces/references/person";
+import PersonDTO from "../../interfaces/person";
+import {TabPanel, TabView, TabViewTabChangeEvent} from "primereact/tabview";
 
 
-async function fetchSchedule(group: GroupReference) : Promise<ReadScheduleResponseDTO> {
+async function fetchSchedule(group: GroupReference | null, teacher: PersonReference | null) : Promise<ReadScheduleResponseDTO> {
     const api = new APIAdapter();
     const start = DateTime.now();
     const end = start.plus({day: 7});
@@ -20,6 +25,7 @@ async function fetchSchedule(group: GroupReference) : Promise<ReadScheduleRespon
         period_start: start.toJSDate(),
         period_end: end.toJSDate(),
         group: group,
+        teacher: teacher,
     });
 }
 
@@ -42,17 +48,19 @@ function packStudyDays(lessons: LessonDTO[]): ScheduleDTO[] {
 }
 
 
-function ScheduleView({group}: {group: GroupReference}) {
+function ScheduleView({group, teacher}: {group: GroupReference | null, teacher: PersonReference | null}) {
     const [schedule, setSchedule] = useState<ScheduleDTO>();
 
     const emptyMessage: string = schedule === undefined ? "Подождите..." : "Занятий нет";
 
     useEffect(() => {
-        const api = new APIAdapter();
-        fetchSchedule(group).then(response =>
+        if (!teacher && !group) {
+            return setSchedule({lessons: []});
+        }
+        fetchSchedule(group, teacher).then(response =>
             setSchedule(response)
         )
-    }, [group]);
+    }, [group, teacher]);
 
     const lessons = schedule?.lessons || [];
     const packedLessons = packStudyDays(lessons);
@@ -70,9 +78,33 @@ function ScheduleView({group}: {group: GroupReference}) {
 }
 
 
-function Schedule() {
-    const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(null);
+interface ScheduleFiltersProps {
 
+}
+
+
+enum ScheduleFilterTabIndex {
+    GROUP = 0,
+    TEACHER
+}
+
+
+function Schedule() {
+    const initialGroup = storage.getScheduleGroup();
+    const initialTeacher = storage.getScheduleTeacher();
+    const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
+    const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
+    const [filterTabIndex, setFilterTabIndex] = useState<number>(0);
+
+    const onSetGroup = (value: GroupDTO) => {
+        storage.setScheduleGroup(value);
+        setGroupEntity(value);
+    }
+
+    const onSetTeacher = (value: PersonDTO) => {
+        storage.setScheduleTeacher(value);
+        setTeacherEntity(value);
+    }
     const resolveGroupMention = async (mention: string) => {
         const gateway = new APIAdapter();
         try {
@@ -85,15 +117,52 @@ function Schedule() {
         }
     };
 
+    const resolveTeacherMention = async (mention: string) => {
+        const gateway = new APIAdapter();
+        try {
+            let response = await gateway.resolveMention(
+                {person_mention: {natural_language: mention}}
+            )
+            return response.persons;
+        } catch (APIError) {
+            return [];
+        }
+    };
+
+    const onTabChange = (e: TabViewTabChangeEvent) => {
+        setFilterTabIndex(e.index);
+    }
+
     return (
-        <>
-            <CellSelect<GroupDTO>
-                entity={groupEntity}
-                setEntity={setGroupEntity}
-                resolveEntitiesMention={resolveGroupMention}
+        <div className={"schedule-container"}>
+            <TabView
+                onTabChange={onTabChange}
+                activeIndex={filterTabIndex}
+            >
+                <TabPanel header="По группе">
+                    <CellSelect<GroupDTO>
+                        entity={groupEntity}
+                        setEntity={onSetGroup}
+                        resolveEntitiesMention={resolveGroupMention}
+                        dropdown={true}
+                        placeholder={"Группа..."}
+                    />
+                </TabPanel>
+                <TabPanel header="По преподавателю">
+                    <CellSelect<PersonDTO>
+                        entity={teacherEntity}
+                        setEntity={onSetTeacher}
+                        resolveEntitiesMention={resolveTeacherMention}
+                        dropdown={true}
+                        placeholder={"ФИО..."}
+                    />
+                </TabPanel>
+            </TabView>
+            <ScheduleView
+                group={filterTabIndex === ScheduleFilterTabIndex.GROUP ? groupEntity : null}
+                teacher={filterTabIndex === ScheduleFilterTabIndex.TEACHER ? teacherEntity : null}
             />
-            {groupEntity && <ScheduleView group={groupEntity}/>}
-        </>
+        </div>
     );
 }
 
