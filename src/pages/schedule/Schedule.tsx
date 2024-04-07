@@ -94,6 +94,10 @@ function Schedule() {
     const gateway = new APIAdapter();
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterTabIndex, setFilterTabIndex] = useState<number>(0);
+    const initialGroup = storage.getScheduleGroup();
+    const initialTeacher = storage.getScheduleTeacher();
+    const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
+    const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
 
     useEffect(() => {
         const paramGroup = searchParams.get("group");
@@ -114,13 +118,14 @@ function Schedule() {
             )
             setFilterTabIndex(ScheduleFilterTabIndex.TEACHER);
         }
+
+        // handle case, when user opened tab without params and its has benn loaded from local storage
+        setSearchParams({
+            ...searchParams,
+            group: groupEntity?.id?.toString(),
+            teacher: teacherEntity?.id?.toString(),
+        })
     }, []);
-
-    const initialGroup = storage.getScheduleGroup();
-    const initialTeacher = storage.getScheduleTeacher();
-
-    const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
-    const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
 
     const onSetGroup = (value: GroupDTO) => {
         storage.setScheduleGroup(value);
