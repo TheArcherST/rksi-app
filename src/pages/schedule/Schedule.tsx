@@ -118,24 +118,29 @@ function Schedule() {
             )
             setFilterTabIndex(ScheduleFilterTabIndex.TEACHER);
         }
+    }, []);
 
-        // handle case, when user opened tab without params and its has benn loaded from local storage
+    useEffect(() => {
         setSearchParams({
             ...searchParams,
             group: groupEntity?.id?.toString(),
+        })
+    }, [groupEntity]);
+
+    useEffect(() => {
+        setSearchParams({
+            ...searchParams,
             teacher: teacherEntity?.id?.toString(),
         })
-    }, []);
+    }, [teacherEntity]);
 
     const onSetGroup = (value: GroupDTO) => {
         storage.setScheduleGroup(value);
-        setSearchParams({...searchParams, group: value.id.toString()})
         setGroupEntity(value);
     }
 
     const onSetTeacher = (value: PersonDTO) => {
         storage.setScheduleTeacher(value);
-        setSearchParams({...searchParams, teacher: value.id.toString()})
         setTeacherEntity(value);
     }
     const resolveGroupMention = async (mention: string) => {
