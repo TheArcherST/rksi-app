@@ -24,12 +24,14 @@ import DetachGroupFromLesson from "../../../domain/updateSchedule/detachGroupFro
 import ReplaceLessonAuditorium from "../../../domain/updateSchedule/replaceLessonAuditorium";
 import {AttachGroupToLesson} from "../../../domain/updateSchedule/attachGroupToLesson";
 import AttachTeacherToLesson from "../../../domain/updateSchedule/attachTeacherToLesson";
+import ScheduleFragmentDTO from "../../../interfaces/scheduleFragment";
 
 
 interface ScheduleTableViewProps {
     lessons: WrappedLessonDTO[];
     processUpdate: (update: UpdateSchedule) => any;
     currentDate: Date;
+    currentScheduleFragment: ScheduleFragmentDTO | null;
 }
 
 
@@ -107,7 +109,8 @@ function ScheduleTableView(props: ScheduleTableViewProps) {
                             schedule_section_mention: {
                                 natural_language: mention,
                                 context: {
-                                    date: new SaneDate(props.currentDate).toString(),
+                                  date: new SaneDate(props.currentDate).toString(),
+                                  schedule_fragment_id: props.currentScheduleFragment?.id,
                                 }
                             }
                         }

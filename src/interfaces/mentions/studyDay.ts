@@ -2,7 +2,7 @@ import BaseMention, {BaseMentionContext} from "./base";
 
 
 export interface StudyDayMentionContext extends BaseMentionContext {
-    date: string,
+    date: string;
 }
 
 

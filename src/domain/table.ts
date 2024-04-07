@@ -136,12 +136,9 @@ export default class ScheduleTable {
         scheduleSection: ScheduleSectionDTO | null
     ): Promise<ScheduleTable> {
         const serializedDate = new SaneDate(date).toString();
-        let [auditoriums, scheduleSections, schedule] = await Promise.all([
+        let [auditoriums, schedule] = await Promise.all([
             client.getAuditoriums({
                 building_numbers: buildingNumbers
-            }),
-            client.resolveMention({
-                schedule_section_mention: {context: {date: serializedDate}}
             }),
             client.readSchedule({
                 date: date,
@@ -155,7 +152,6 @@ export default class ScheduleTable {
             {
                 wrappedLessons: wrappedLessons,
                 auditoriums: auditoriums.auditoriums,
-                scheduleSections: scheduleSections.schedule_sections,
                 date: date,
             },
         );

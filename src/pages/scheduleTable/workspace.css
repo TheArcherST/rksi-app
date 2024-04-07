@@ -103,7 +103,7 @@ td {
 .workspace .toolbox {
     position: sticky;
     top: 5em;
-    max-height: 25em;
+    max-height: 30em;
     display: flex;
     flex-direction: column;
 }

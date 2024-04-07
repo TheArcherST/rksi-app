@@ -33,7 +33,7 @@ function Workspace(props: WorkspaceProps) {
 
 
     function reloadTable(previous: ScheduleTable | null = null) {
-        if (props.toolboxProps.scheduleSection === null) {
+        if (!props.toolboxProps.scheduleFragment) {
             return;
         }
         const gateway = new APIAdapter();
@@ -69,7 +69,15 @@ function Workspace(props: WorkspaceProps) {
                         detail: 'Изменения не сохранены',
                         life: 5000,
                     });
+                } else {
+                    schedulePullToast.current!.show({
+                        severity: 'error',
+                        summary: `Ошибка ${err}`,
+                        detail: 'Изменения не сохранены',
+                        life: 10000,
+                    });
                 }
+                props.setIsSaveDisabled(false);
             }).finally(() => {
                 props.setIsSaveInProgress(false);
             });
@@ -98,8 +106,7 @@ function Workspace(props: WorkspaceProps) {
     })
 
     useEffect(reloadTable, [
-        props.currentDate,
-        props.buildingNumbers,
+        props.toolboxProps.scheduleFragment,
         props.toolboxProps.scheduleSection,
     ]);
 
@@ -132,7 +139,9 @@ function Workspace(props: WorkspaceProps) {
                     <ScheduleTableView
                         lessons={lessons}
                         processUpdate={handleProcessUpdate}
-                        currentDate={props.currentDate} />
+                        currentDate={props.currentDate}
+                        currentScheduleFragment={props.toolboxProps.scheduleFragment}
+                    />
                 }
             </div>
         </main>

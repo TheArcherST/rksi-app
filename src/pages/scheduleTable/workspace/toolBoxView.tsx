@@ -1,5 +1,4 @@
-import React from "react";
-import {useState} from "react";
+import React, {useState} from "react";
 
 import {Button} from "primereact/button";
 import {Calendar} from "primereact/calendar";
@@ -11,6 +10,8 @@ import ScheduleSectionDTO from "../../../interfaces/scheduleSection";
 import {Dropdown} from "primereact/dropdown";
 import APIAdapter from "../../../adapters/api";
 import SaneDate from "../../../infrastructure/saneDate";
+import TimetableDTO from "../../../interfaces/timetable";
+import ScheduleFragmentDTO from "../../../interfaces/scheduleFragment";
 
 
 interface DateSelectorProps {
@@ -94,13 +95,12 @@ function BuildingNumberSelector(
     return (
         <div className="card flex justify-content-center">
             <SelectButton
-                value={buildingNumbers}
+                value={buildingNumbers[0]}
                 onChange={(e) => {
-                    setBuildingNumbers(e.value);
+                    setBuildingNumbers([e.value]);
                 }}
                 optionLabel="name"
-                options={items}
-                multiple />
+                options={items}/>
         </div>
     );
 }
@@ -128,11 +128,40 @@ function ScheduleSectionSelector(
 }
 
 
+interface TimetableSelectorProps {
+  timetables: TimetableDTO[];
+  timetable: TimetableDTO | null;
+  setTimetable: (value: TimetableDTO) => any;
+}
+
+function TimetableSelector(
+  props: TimetableSelectorProps,
+) {
+  const items = props.timetables.map(i =>
+    new Object({name: i.display_text, value: i}));
+  return (
+    <Dropdown
+      value={props.timetable}
+      onChange={(e) => {
+        props.setTimetable(e.value);
+      }}
+      optionLabel="name"
+      options={items}/>
+  );
+}
+
+
 export interface ToolBoxProps {
     scheduleSection: ScheduleSectionDTO | null;
     setScheduleSection: (value: ScheduleSectionDTO) => any;
     scheduleSections: ScheduleSectionDTO[];
     setScheduleSections: (value: ScheduleSectionDTO[]) => any;
+    timetable: TimetableDTO | null;
+    setTimetable: (value: TimetableDTO) => any;
+    timetables: TimetableDTO[];
+    setTimetables: (value: TimetableDTO[]) => any;
+    scheduleFragment: ScheduleFragmentDTO | null;
+    setScheduleFragment: (value: ScheduleFragmentDTO) => any;
     currentDate: Date;
     setDate: (value: Date) => any;
     setIsSaveButtonPressed: (value: boolean) => any;
@@ -145,26 +174,86 @@ export interface ToolBoxProps {
 
 function ToolBoxView(
     {
-        currentDate, setDate, setIsSaveButtonPressed,
-        isSaveDisabled, isSaveInProgress, buildingNumbers, setBuildingNumbers,
-        setScheduleSection, scheduleSection, scheduleSections, setScheduleSections
+      currentDate, setDate, setIsSaveButtonPressed,
+      isSaveDisabled, isSaveInProgress, buildingNumbers, setBuildingNumbers,
+      setScheduleSection, scheduleSection, scheduleSections, setScheduleSections,
+      timetable, setTimetable, timetables, setTimetables,
+      scheduleFragment, setScheduleFragment,
     }: ToolBoxProps
 ) {
     const onDateUpdate = (value: Date) => {
       const gateway = new APIAdapter();
+      // load all timetables
       gateway.resolveMention({
-        schedule_section_mention: {
-          natural_language: null,
+        timetable_mention: {}
+      }).then((response) => {
+        setTimetables(response.timetables);
+      });
+
+      // load current fragment and its context
+      gateway.resolveMention({
+        schedule_fragment_mention: {
           context: {
-            date: new SaneDate(value).toString(),
+            study_days: {
+              context: {
+                date: new SaneDate(value).toString(),
+              }
+            },
+            building_numbers: buildingNumbers,
           }
         }
       }).then((response) => {
-        setScheduleSection(response.schedule_sections[0]);
-        setScheduleSections(response.schedule_sections);
-      })
-    };
+        if (response.schedule_fragments.length !== 1) {
+          console.error(
+            "Schedule fragments count not equals to one. Domain " +
+            "agreement is violated so application wont do anything."
+          )
+          return;
+        }
+        return response.schedule_fragments[0];
+      }).then((fragment: ScheduleFragmentDTO | undefined) => {
+        // load all timetable sections of current context
+        gateway.resolveMention({
+          schedule_section_mention: {
+            natural_language: null,
+            context: {
+              date: new SaneDate(value).toString(),
+              building_numbers: buildingNumbers,
+              schedule_fragment_id: fragment?.id,
+            }
+          }
+        }).then((response) => {
+          setTimetable(fragment!.timetable);
+          setScheduleFragment(fragment!);
+          setScheduleSection(response.schedule_sections[0]);
+          setScheduleSections(response.schedule_sections);
+        })
+        });
+    }
 
+    const onTimetableUpdate = (value: TimetableDTO) => {
+      const gateway = new APIAdapter();
+      gateway.editSchedule({
+        updates: [{
+          edit_schedule_fragment: {
+            schedule_fragment: {
+              id: scheduleFragment?.id,
+            },
+            set_timetable: {
+              id: value.id,
+            }
+          }
+        }]
+      }).then(() => {
+        onDateUpdate(currentDate);
+      });
+    }
+
+    const onBuildingNumbersUpdate = (value: number[]) => {
+      setBuildingNumbers(value);
+      buildingNumbers = value;
+      onDateUpdate(currentDate);
+    }
     useState(() => {
       onDateUpdate(currentDate);
     });
@@ -179,7 +268,12 @@ function ToolBoxView(
                 }}/>
             <BuildingNumberSelector
                 buildingNumbers={buildingNumbers}
-                setBuildingNumbers={setBuildingNumbers}
+                setBuildingNumbers={onBuildingNumbersUpdate}
+            />
+            <TimetableSelector
+              timetable={timetable}
+              setTimetable={onTimetableUpdate}
+              timetables={timetables}
             />
             <ScheduleSectionSelector
                 scheduleSection={scheduleSection}

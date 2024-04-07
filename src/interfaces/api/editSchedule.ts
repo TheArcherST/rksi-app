@@ -5,6 +5,8 @@ import GroupReference from "../references/group";
 import ScheduleSectionReference from "../references/scheduleSection";
 import AuditoriumReference from "../references/auditorium";
 import DisciplineReference from "../references/discipline";
+import ScheduleFragmentReference from "../references/scheduleFragment";
+import TimetableReference from "../references/timetable";
 
 
 export interface EditLessonDTO {
@@ -53,10 +55,17 @@ export interface DeleteLessonDTO {
 }
 
 
+export interface EditScheduleFragmentDTO {
+    schedule_fragment: ScheduleFragmentReference;
+    set_timetable: TimetableReference;
+}
+
+
 export interface ScheduleUpdateDTO {
     create_lesson?: CreateLessonDTO | null;
     delete_lesson?: DeleteLessonDTO | null;
     edit_lesson?: EditLessonDTO | null;
+    edit_schedule_fragment?: EditScheduleFragmentDTO | null;
 }
 
 

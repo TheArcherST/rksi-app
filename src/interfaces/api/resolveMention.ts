@@ -9,6 +9,10 @@ import AuditoriumMention from "../mentions/auditorium";
 import DisciplineMention from "../mentions/discipline";
 import ScheduleSectionMention from "../mentions/scheduleSection";
 import StudyDayMention from "../mentions/studyDay";
+import ScheduleFragmentMention from "../mentions/scheduleFragment";
+import ScheduleFragmentDTO from "../scheduleFragment";
+import TimetableDTO from "../timetable";
+import TimetableMention from "../mentions/timetableMention";
 
 
 export interface ResolveMention {
@@ -16,8 +20,10 @@ export interface ResolveMention {
     person_mention?: PersonMention;
     auditorium_mention?: AuditoriumMention;
     discipline_mention?: DisciplineMention;
-    schedule_section_mention?: ScheduleSectionMention;
     study_day_mention?: StudyDayMention;
+    timetable_mention?: TimetableMention;
+    schedule_fragment_mention?: ScheduleFragmentMention;
+    schedule_section_mention?: ScheduleSectionMention;
 }
 
 
@@ -26,5 +32,7 @@ export interface ResolveMentionResponse {
     persons: PersonDTO[];
     auditoriums: AuditoriumDTO[];
     disciplines: DisciplineDTO[];
+    timetables: TimetableDTO[];
+    schedule_fragments: ScheduleFragmentDTO[];
     schedule_sections: ScheduleSectionDTO[];
 }
