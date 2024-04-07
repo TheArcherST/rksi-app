@@ -41,7 +41,11 @@ const router = createBrowserRouter(
         {
             path: '/schedule',
             element: <SchedulePage />
-        }
+        },
+        {
+            path: '/schedule/:date',
+            element: <SchedulePage />
+        },
     ]
 )
 

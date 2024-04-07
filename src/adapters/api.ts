@@ -8,6 +8,7 @@ import {RegisterDTO, RegisterResponseDTO} from "../interfaces/api/register";
 import {CreateUTMDTO, CreateUTMResponseDTO} from "../interfaces/api/createUTM";
 import {WriteUTMDTO, WriteUTMResponseDTO} from "../interfaces/api/writeUTM";
 import {ReadScheduleDTO, ReadScheduleResponseDTO} from "../interfaces/api/readSchedule";
+import {ResolveReference, ResolveReferenceResponse} from "../interfaces/api/resolveReference";
 
 
 interface APIErrorI extends Error {
@@ -170,6 +171,21 @@ class APIAdapter {
             path: '/v1/schedule/read',
             json: payload,
         });
+    }
+
+    async resolveReference(payload: ResolveReference): Promise<ResolveReferenceResponse> {
+        try {
+            return await this.processRequest({
+                method: 'POST',
+                path: '/v1/references/resolve',
+                json: payload,
+            });
+        } catch (e) {
+            if (!(e instanceof APIError))  {
+                throw e;
+            }
+            throw e;
+        }
     }
 
     async resolveMention(payload: ResolveMention) : Promise<ResolveMentionResponse> {

@@ -15,6 +15,7 @@ import {validateYupSchema} from "formik";
 import PersonReference from "../../interfaces/references/person";
 import PersonDTO from "../../interfaces/person";
 import {TabPanel, TabView, TabViewTabChangeEvent} from "primereact/tabview";
+import {useSearchParams} from "react-router-dom";
 
 
 async function fetchSchedule(group: GroupReference | null, teacher: PersonReference | null) : Promise<ReadScheduleResponseDTO> {
@@ -90,19 +91,42 @@ enum ScheduleFilterTabIndex {
 
 
 function Schedule() {
+    const gateway = new APIAdapter();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const paramGroup = searchParams.get("group");
+    const paramTeacher = searchParams.get("teacher");
+    if (paramGroup !== null) {
+        gateway.resolveReference({group_reference: {id: Number.parseInt(paramGroup)}}).then(
+            (response) => {
+                setGroupEntity(response.group);
+            }
+        )
+    }
+    if (paramTeacher !== null) {
+        gateway.resolveReference({person_reference: {id: Number.parseInt(paramTeacher)}}).then(
+            (response) => {
+                setTeacherEntity(response.person);
+            }
+        )
+    }
+
     const initialGroup = storage.getScheduleGroup();
     const initialTeacher = storage.getScheduleTeacher();
+
     const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
     const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
     const [filterTabIndex, setFilterTabIndex] = useState<number>(0);
 
     const onSetGroup = (value: GroupDTO) => {
         storage.setScheduleGroup(value);
+        setSearchParams({...searchParams, group: value.id.toString()})
         setGroupEntity(value);
     }
 
     const onSetTeacher = (value: PersonDTO) => {
         storage.setScheduleTeacher(value);
+        setSearchParams({...searchParams, teacher: value.id.toString()})
         setTeacherEntity(value);
     }
     const resolveGroupMention = async (mention: string) => {
