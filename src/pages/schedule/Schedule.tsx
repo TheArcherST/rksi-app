@@ -146,7 +146,7 @@ function Schedule() {
                 break;
         }
         setSearchParams(searchParams);
-    }, [filterTabIndex]);
+    }, [teacherEntity, groupEntity, filterTabIndex]);
 
     const resolveGroupMention = async (mention: string) => {
         const gateway = new APIAdapter();
