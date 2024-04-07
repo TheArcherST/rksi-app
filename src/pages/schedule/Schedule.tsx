@@ -93,30 +93,34 @@ enum ScheduleFilterTabIndex {
 function Schedule() {
     const gateway = new APIAdapter();
     const [searchParams, setSearchParams] = useSearchParams();
+    const [filterTabIndex, setFilterTabIndex] = useState<number>(0);
 
-    const paramGroup = searchParams.get("group");
-    const paramTeacher = searchParams.get("teacher");
-    if (paramGroup !== null) {
-        gateway.resolveReference({group_reference: {id: Number.parseInt(paramGroup)}}).then(
-            (response) => {
-                setGroupEntity(response.group);
-            }
-        )
-    }
-    if (paramTeacher !== null) {
-        gateway.resolveReference({person_reference: {id: Number.parseInt(paramTeacher)}}).then(
-            (response) => {
-                setTeacherEntity(response.person);
-            }
-        )
-    }
+    useEffect(() => {
+        const paramGroup = searchParams.get("group");
+        const paramTeacher = searchParams.get("teacher");
+        if (paramGroup !== null) {
+            gateway.resolveReference({group_reference: {id: Number.parseInt(paramGroup)}}).then(
+              (response) => {
+                  setGroupEntity(response.group);
+              }
+            )
+            setFilterTabIndex(ScheduleFilterTabIndex.GROUP);
+        }
+        if (paramTeacher !== null) {
+            gateway.resolveReference({person_reference: {id: Number.parseInt(paramTeacher)}}).then(
+              (response) => {
+                  setTeacherEntity(response.person);
+              }
+            )
+            setFilterTabIndex(ScheduleFilterTabIndex.TEACHER);
+        }
+    }, []);
 
     const initialGroup = storage.getScheduleGroup();
     const initialTeacher = storage.getScheduleTeacher();
 
     const [groupEntity, setGroupEntity] = useState<GroupDTO | null>(initialGroup);
     const [teacherEntity, setTeacherEntity] = useState<PersonDTO | null>(initialTeacher);
-    const [filterTabIndex, setFilterTabIndex] = useState<number>(0);
 
     const onSetGroup = (value: GroupDTO) => {
         storage.setScheduleGroup(value);
@@ -155,6 +159,11 @@ function Schedule() {
 
     const onTabChange = (e: TabViewTabChangeEvent) => {
         setFilterTabIndex(e.index);
+        if (e.index === ScheduleFilterTabIndex.TEACHER) {
+            setSearchParams({...searchParams, teacher: teacherEntity?.id?.toString()})
+        } else if (e.index === ScheduleFilterTabIndex.GROUP) {
+            setSearchParams({...searchParams, group: groupEntity?.id?.toString()})
+        }
     }
 
     return (
