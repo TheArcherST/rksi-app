@@ -28,6 +28,7 @@ export function RegistrationForm() {
         initialValues: {
             value: '',
             password: '',
+            password_repeat: '',
             first_name: '',
             second_name: '',
             patronymic: '',
@@ -37,6 +38,7 @@ export function RegistrationForm() {
             let errors: {
                 email?: string,
                 password?: string,
+                password_repeat?: string,
                 first_name?: string,
                 second_name?: string,
                 patronymic?: string,
@@ -47,6 +49,12 @@ export function RegistrationForm() {
             }
             if (!data.password) {
                 errors.password = 'Пароль обязателен.';
+            }
+            if (!data.password_repeat) {
+                errors.password_repeat = 'Повтор пароля обязателен.';
+            }
+            if (data.password !== data.password_repeat) {
+                errors.password_repeat = "Пароли не совпадают";
             }
             if (!data.first_name) {
                 errors.first_name = 'Имя обязательно.';
@@ -157,6 +165,18 @@ export function RegistrationForm() {
                         }}
                     />
                     {getFormErrorMessage('password')}
+                    <label htmlFor="password">Повтор пароля</label>
+                    <Password
+                      inputId="password"
+                      name="password"
+                      className={classNames({ 'p-invalid': isFormFieldInvalid('password_repeat') })}
+                      value={formik.values.password_repeat || ''}
+                      feedback={false}
+                      onChange={(e) => {
+                          formik.setFieldValue('password_repeat', e.target.value);
+                      }}
+                    />
+                    {getFormErrorMessage('password_repeat')}
                     <Button
                         label="Подтвердить"
                         type="submit"
@@ -196,7 +216,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
             let errors: {username?: string, password?: string} = {};
 
             if (!data.username) {
-                errors.username = 'Почта обязателена.';
+                errors.username = 'Почта или логин обязателены.';
             }
             if (!data.password) {
                 errors.password = 'Пароль обязателен.';
@@ -251,7 +271,7 @@ export function LoginForm({isTelegramRedirect}: LoginFormProps) {
             <h1>Вход в аккаунт</h1>
             <div className="card flex justify-content-center">
                 <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2">
-                    <label htmlFor="username">Почта</label>
+                    <label htmlFor="username">Почта или логин</label>
                     <Toast
                         ref={toast}
                         style={{marginTop: '5em'}}
