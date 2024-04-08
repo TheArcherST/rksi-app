@@ -8,5 +8,5 @@ h1 {
 }
 
 .register-main {
-    height: clamp(50em, 70vh, 80vh);
+    height: clamp(55em, 70vh, 80vh);
 }
