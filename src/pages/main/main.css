@@ -7,6 +7,27 @@ h1 {
     height: clamp(30em, 70vh, 80vh);
 }
 
-.register-main {
-    height: clamp(55em, 70vh, 80vh);
+.registration-content {
+    max-width: 800px;
+    margin: auto;
+    margin-bottom: 10vh;
+
+    .flex {
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-content: center;
+    }
 }
+
+.policy-note {
+    max-width: 350px;
+    color: #333;
+}
+
+.policy-note > *:link, .policy-note > *:visited  {
+    color: cornflowerblue;
+}
+
+/* .register-main {
+    height: clamp(50em, 70vh, 70vh);
+} */

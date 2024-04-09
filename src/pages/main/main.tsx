@@ -11,7 +11,7 @@ import 'primeflex/primeflex.css';
 
 import './main.css';
 import APIAdapter, {APIError, InvalidUsernameOrPassword} from "../../adapters/api";
-import {redirect, useNavigate, useSearchParams,} from "react-router-dom";
+import {Link, useNavigate, useSearchParams,} from "react-router-dom";
 import storage from "../../infrastructure/storage";
 
 
@@ -101,11 +101,11 @@ export function RegistrationForm() {
     };
 
     return (
-        <>
+        <div className="registration-content">
             <h1>Регистрация</h1>
             <div className="card flex justify-content-center">
                 <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2">
-                    <label htmlFor="second_name">Фиамилия</label>
+                    <label htmlFor="second_name">Фамилия</label>
                     <Toast
                         ref={toast}
                         style={{marginTop: '5em'}}
@@ -165,10 +165,10 @@ export function RegistrationForm() {
                         }}
                     />
                     {getFormErrorMessage('password')}
-                    <label htmlFor="password">Повтор пароля</label>
+                    <label htmlFor="password_repeat">Повтор пароля</label>
                     <Password
-                      inputId="password"
-                      name="password"
+                      inputId="password_repeat"
+                      name="password_repeat"
                       className={classNames({ 'p-invalid': isFormFieldInvalid('password_repeat') })}
                       value={formik.values.password_repeat || ''}
                       feedback={false}
@@ -177,14 +177,18 @@ export function RegistrationForm() {
                       }}
                     />
                     {getFormErrorMessage('password_repeat')}
-                    <Button
-                        label="Подтвердить"
-                        type="submit"
-                        style={{marginTop: '1em'}}
-                    />
                 </form>
+                <p className="policy-note">
+                        Нажимая на кнопку "Подтвердить", вы соглашаетесь с{" "}
+                        <Link to="/privacy-policy">Политикой обработки персональных данных</Link>.
+                </p>
+                <Button
+                    label="Подтвердить"
+                    type="submit"
+                    style={{marginTop: '1em'}}
+                />
             </div>
-        </>
+        </div>
     )
 }
 

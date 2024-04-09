@@ -15,6 +15,7 @@ import 'primereact/resources/primereact.css';
 import './App.css';
 import {MainPageDestiny} from "./pages/main/main";
 import SchedulePage from "./pages/schedule/SchedulePage";
+import PrivacyPolicyPage from "./pages/privacyPolicy/privacy_policy";
 
 
 addRuLocale();
@@ -45,6 +46,10 @@ const router = createBrowserRouter(
         {
             path: '/schedule/:date',
             element: <SchedulePage />
+        },
+        {
+            path: '/privacy-policy',
+            element: <PrivacyPolicyPage />
         },
     ]
 )
