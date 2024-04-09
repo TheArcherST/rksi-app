@@ -1,8 +1,6 @@
 import {useEffect, useState} from "react";
 import Workspace from "./workspace";
-import Footer from "../../components/footer/footer";
 import storage from "../../infrastructure/storage";
-import BaseHeader from "../../components/header/baseHeader";
 import ScheduleSectionDTO from "../../interfaces/scheduleSection";
 import TimetableDTO from "../../interfaces/timetable";
 import ScheduleFragmentDTO from "../../interfaces/scheduleFragment";
@@ -31,7 +29,6 @@ function ScheduleEditorPage() {
 
   return (
     <>
-      <BaseHeader />
       <Workspace
         toolboxProps={{
           isSaveDisabled: isSaveDisabled,
@@ -61,7 +58,6 @@ function ScheduleEditorPage() {
         setIsSaveDisabled={setIsSaveDisabled}
         buildingNumbers={buildingNumbers}
       />
-      <Footer />
     </>
   )
 }

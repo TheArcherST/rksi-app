@@ -1,6 +1,3 @@
-import BaseHeader from "../../components/header/baseHeader";
-import Footer from "../../components/footer/footer";
-
 import Main, {MainPageDestiny,} from './main';
 import {useSearchParams} from "react-router-dom";
 
@@ -16,18 +13,10 @@ function MainPage(props: MainPageProps) {
     let isTelegramRedirect = origin === 'telegram';
 
     return (
-        <>
-            <BaseHeader />
-            <Main
-                isTelegramRedirect={isTelegramRedirect}
-                destiny={props.destiny}
-            />
-            <Footer
-                style={{
-                    height: '20vh',
-                }}
-            />
-        </>
+        <Main
+            isTelegramRedirect={isTelegramRedirect}
+            destiny={props.destiny}
+        />
     );
 }
 

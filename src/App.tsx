@@ -16,6 +16,8 @@ import './App.css';
 import {MainPageDestiny} from "./pages/main/main";
 import SchedulePage from "./pages/schedule/SchedulePage";
 import PrivacyPolicyPage from "./pages/privacyPolicy/privacy_policy";
+import BaseHeader from "./components/header/baseHeader";
+import Footer from "./components/footer/footer";
 
 
 addRuLocale();
@@ -56,7 +58,13 @@ const router = createBrowserRouter(
 
 function App() {
     locale('ru');
-    return <RouterProvider router={router} />
+    return (
+    <>
+        <BaseHeader/>
+        <RouterProvider router={router} />
+        <Footer/>
+    </>
+    )
 }
 
 
