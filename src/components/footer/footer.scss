@@ -1,0 +1,12 @@
+@import "../../styles/variables.scss";
+
+footer {
+    height: 12vh;
+    background-color: $title-color;
+}
+
+.layout-footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}

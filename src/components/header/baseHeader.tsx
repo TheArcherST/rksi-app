@@ -1,5 +1,5 @@
 import React, {ReactNode} from "react";
-import './header.css';
+import './header.scss';
 
 
 function AppLogo() {
