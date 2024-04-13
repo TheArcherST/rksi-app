@@ -1,9 +1,8 @@
 import {AutoComplete} from "primereact/autocomplete";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 import Entity from "../../interfaces/entity";
 import * as React from "react";
-import {Button} from "primereact/button";
 
 
 function getArraysDiff(arr1: any[], arr2: any[]) {

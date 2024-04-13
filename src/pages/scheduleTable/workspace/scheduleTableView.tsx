@@ -6,7 +6,7 @@ import APIAdapter from "../../../adapters/api";
 import CellMultiselect from "../../../components/table/cellMultiselect";
 import CellSelect from "../../../components/table/cellSelect";
 
-import LessonDTO from "../../../interfaces/lesson";
+// import LessonDTO from "../../../interfaces/lesson";
 import GroupDTO from "../../../interfaces/group";
 import PersonDTO from "../../../interfaces/person";
 import AuditoriumDTO from "../../../interfaces/auditorium";
@@ -19,7 +19,7 @@ import DetachTeacherFromLesson from "../../../domain/updateSchedule/detachTeache
 import ReplaceLessonScheduleSection from "../../../domain/updateSchedule/replaceLessonScheduleSection";
 import ReplaceLessonDiscipline from "../../../domain/updateSchedule/replaceLessonDiscipline";
 import DeleteLesson from "../../../domain/updateSchedule/deleteLesson";
-import UpdateSchedule, {WrappedLessonDTO, WrappedScheduleDTO} from "../../../domain/updateSchedule/base";
+import UpdateSchedule, {WrappedLessonDTO} from "../../../domain/updateSchedule/base";
 import DetachGroupFromLesson from "../../../domain/updateSchedule/detachGroupFromLesson";
 import ReplaceLessonAuditorium from "../../../domain/updateSchedule/replaceLessonAuditorium";
 import {AttachGroupToLesson} from "../../../domain/updateSchedule/attachGroupToLesson";

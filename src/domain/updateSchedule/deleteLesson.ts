@@ -1,5 +1,5 @@
 import {ScheduleUpdateDTO} from "../../interfaces/api/editSchedule";
-import UpdateSchedule, {createLessonTemplateDTO, LessonTemplateDTO, WrappedLessonDTO, WrappedScheduleDTO} from "./base";
+import UpdateSchedule, {LessonTemplateDTO, WrappedLessonDTO, WrappedScheduleDTO} from "./base";
 
 
 export default class DeleteLesson implements UpdateSchedule {

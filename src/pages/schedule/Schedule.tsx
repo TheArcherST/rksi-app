@@ -1,7 +1,7 @@
 import './Schedule.css'
 import {DataScroller} from "primereact/datascroller";
 import LessonDTO from "../../interfaces/lesson";
-import APIAdapter, {APIError} from "../../adapters/api";
+import APIAdapter from "../../adapters/api";
 import {useCallback, useEffect, useRef, useState} from "react";
 import ScheduleDTO from "../../interfaces/schedule";
 import { DateTime } from "luxon";
@@ -11,12 +11,12 @@ import GroupDTO from "../../interfaces/group";
 import GroupReference from "../../interfaces/references/group";
 import CellSelect from "../../components/table/cellSelect";
 import storage from "../../infrastructure/storage";
-import {validateYupSchema} from "formik";
+// import {validateYupSchema} from "formik";
 import PersonReference from "../../interfaces/references/person";
 import PersonDTO from "../../interfaces/person";
 import {TabPanel, TabView, TabViewTabChangeEvent} from "primereact/tabview";
 import {useSearchParams} from "react-router-dom";
-import {useTimeout} from "primereact/hooks";
+// import {useTimeout} from "primereact/hooks";
 
 
 async function fetchSchedule(group: GroupReference | null, teacher: PersonReference | null) : Promise<ReadScheduleResponseDTO> {

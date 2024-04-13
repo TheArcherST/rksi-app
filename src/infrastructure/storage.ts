@@ -1,10 +1,7 @@
-import {es} from "chrono-node";
 import GroupDTO from "../interfaces/group";
 import PersonDTO from "../interfaces/person";
 
 export class Storage {
-    constructor() {
-    }
 
     setAccessToken(token: string): void {
         localStorage.setItem('access_token', token);

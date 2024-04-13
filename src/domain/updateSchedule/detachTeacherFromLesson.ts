@@ -1,4 +1,4 @@
-import LessonDTO from "../../interfaces/lesson";
+// import LessonDTO from "../../interfaces/lesson";
 import PersonDTO from "../../interfaces/person";
 import {ScheduleUpdateDTO} from "../../interfaces/api/editSchedule";
 import UpdateSchedule, {WrappedLessonDTO, WrappedScheduleDTO} from "./base";

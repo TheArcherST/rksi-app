@@ -114,8 +114,9 @@ interface ScheduleSectionSelectorProps {
 function ScheduleSectionSelector(
     props: ScheduleSectionSelectorProps,
 ) {
-    const items = props.scheduleSections.map(i =>
-        new Object({name: i.display_text, value: i}));
+
+    const items = props.scheduleSections.map(i => ({name: i.display_text, value: i}));
+
     return (
         <Dropdown
             value={props.scheduleSection}
@@ -137,8 +138,8 @@ interface TimetableSelectorProps {
 function TimetableSelector(
   props: TimetableSelectorProps,
 ) {
-  const items = props.timetables.map(i =>
-    new Object({name: i.display_text, value: i}));
+  const items = props.timetables.map(i => ({name: i.display_text, value: i}));
+  
   return (
     <Dropdown
       value={props.timetable}

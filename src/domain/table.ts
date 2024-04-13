@@ -6,7 +6,7 @@ import UpdateSchedule, {createLessonTemplateDTO, WrappedLessonDTO, WrappedSchedu
 import DeleteLesson from "./updateSchedule/deleteLesson";
 import CreateLesson from "./updateSchedule/createLesson";
 import ScheduleSectionDTO from "../interfaces/scheduleSection";
-import SaneDate from "../infrastructure/saneDate";
+// import SaneDate from "../infrastructure/saneDate";
 
 
 
@@ -136,7 +136,7 @@ export default class ScheduleTable {
         buildingNumbers: number[],
         scheduleSection: ScheduleSectionDTO | null
     ): Promise<ScheduleTable> {
-        const serializedDate = new SaneDate(date).toString();
+        // const serializedDate = new SaneDate(date).toString();
         let [auditoriums, schedule] = await Promise.all([
             client.getAuditoriums({
                 building_numbers: buildingNumbers

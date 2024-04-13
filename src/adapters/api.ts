@@ -65,15 +65,12 @@ class APIAdapter {
 
     static baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-    constructor() {
-    }
-
     protected getAPIErrorObj(response: Response): APIErrorI {
         const status = response.status;
         const milestoneDigit = Math.floor(response.status / 100);
 
-        if (milestoneDigit == 4) {
-            if (status == 401) {
+        if (milestoneDigit === 4) {
+            if (status === 401) {
                 return new APIAuthorizationError();
             } else {
                 return new APIErrorInvalidRequest(status);
@@ -103,7 +100,7 @@ class APIAdapter {
         }
         let url = new URL(path, APIAdapter.baseUrl);
         const response = await fetch(url, requestInit,);
-        if (Math.floor(response.status / 100) != 2) {
+        if (Math.floor(response.status / 100) !== 2) {
             const err = this.getAPIErrorObj(response);
             if (err instanceof APIAuthorizationError) {
                 window.location.replace('/');

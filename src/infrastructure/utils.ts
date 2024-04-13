@@ -22,5 +22,5 @@ export function deepEqualDTOs(
     first: LessonTemplateDTO,
     second: LessonTemplateDTO,
 ) {
-    return JSON.stringify(first) == JSON.stringify(second);
+    return JSON.stringify(first) === JSON.stringify(second);
 }

@@ -2,7 +2,7 @@ import ScheduleDTO from "../../interfaces/schedule";
 import {DateTime} from "luxon";
 
 import "./StudyDayTemplate.css";
-import LessonTemplate, {LessonTemplateProps} from "./LessonTemplate";
+import LessonTemplate from "./LessonTemplate";
 
 
 function StudyDayHeader({date}: {date: DateTime}) {
