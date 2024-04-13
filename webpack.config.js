@@ -1,18 +1,23 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {
-  CleanWebpackPlugin
-} = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const Dotenv = require('dotenv-webpack');
+
 const webpack = require('webpack');
 
+const Dotenv = require('dotenv-webpack');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
+
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    main: './src/index.js',
+  },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.[hash].js',
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name].[contenthash].js',
     publicPath: '/',
+    clean: true,
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.scss'],
@@ -20,11 +25,16 @@ module.exports = {
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  performance: {
+    hints: false
+  },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: [{
+        use: [
+          {
             loader: 'ts-loader',
             options: {
               transpileOnly: true,
@@ -45,50 +55,49 @@ module.exports = {
       {
         test: /\.(s[ac]|c)ss$/i,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                includePaths: [path.resolve(__dirname, 'src')],
-              },
-            },
-          },
+          'sass-loader',
         ],
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        use: [{
-          loader: 'file-loader',
-        }, ],
+        test: /\.(png|jpe?g|gif|svg|ico|woff2?|eot|ttf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[name][ext]',
+        },
       },
     ],
   },
   plugins: [
     new Dotenv(),
-    
-    new CleanWebpackPlugin(),
+
+    new webpack.ProvidePlugin({
+      React: 'react',
+    }),
 
     new HtmlWebpackPlugin({
       template: 'public/index.html',
     }),
 
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } },
+      ],
+    }),
+
     new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-      chunkFilename: '[id].[hash].css',
+      filename: 'css/[name].[contenthash].css',
     }),
 
-    new webpack.ProvidePlugin({
-      React: "react",
+    new InterpolateHtmlPlugin({
+      PUBLIC_URL: '',
     }),
 
-    new webpack.HotModuleReplacementPlugin(),
   ],
-  
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: path.join(__dirname, 'build'),
     },
     compress: true,
     hot: true,
